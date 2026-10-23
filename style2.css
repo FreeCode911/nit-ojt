@@ -1,0 +1,11 @@
+/* ---------- PAGE 7 ---------- */
+#into{
+    font-size: 20px;
+}
+.highlight {
+    background-color: rgb(72, 0, 255);
+    color: rgb(95, 255, 47);
+}
+p{
+    color: rgb(50, 252, 0);
+}

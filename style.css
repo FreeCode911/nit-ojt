@@ -1,0 +1,162 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Rajdhani:wght@400;600&display=swap');
+
+/* ---------- PAGE BACKGROUND ---------- */
+body {
+    margin: 0;
+    padding: 30px 15px;
+    font-family: 'Rajdhani', Arial, Helvetica, sans-serif;
+    font-size: 18px;
+    color: white;
+    background: linear-gradient(160deg, #04120d, #061a1a, #0a1024, #05070f);
+    background-attachment: fixed;
+}
+
+/* ---------- HEADINGS AND TEXT ---------- */
+h1 {
+    text-align: center;
+    color: chartreuse;
+    font-family: 'Orbitron', Arial, sans-serif;
+}
+
+h2 {
+    text-align: center;
+    color: blanchedalmond;
+    font-family: 'Orbitron', Arial, sans-serif;
+}
+
+p {
+    text-align: center;
+}
+
+/* ---------- DIVIDER LINE ---------- */
+hr {
+    border: none;
+    height: 1px;
+    margin: 25px 0;
+    background: linear-gradient(90deg, transparent, chartreuse, transparent);
+}
+
+/* ---------- BUTTONS ---------- */
+.btn {
+    display: block;
+    width: 320px;
+    max-width: 100%;
+    margin: 12px auto;
+    padding: 12px;
+    border: 2px solid chartreuse;
+    border-radius: 10px;
+    background-color: black;
+    color: chartreuse;
+    font-family: 'Orbitron', Arial, sans-serif;
+    font-size: 16px;
+    letter-spacing: 1px;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background-color: chartreuse;
+    color: black;
+}
+
+/* ---------- HOME PAGE ---------- */
+.home {
+    max-width: 640px;
+    margin: 0 auto;
+}
+
+.home-title {
+    margin: 0;
+    font-size: 50px;
+    letter-spacing: 3px;
+}
+
+.home-title sup {
+    font-size: 16px;
+    color: aqua;
+}
+
+.home-sub {
+    margin-top: 5px;
+}
+
+.home-footer {
+    margin-top: 30px;
+    font-size: 13px;
+    color: #aaaaaa;
+}
+
+/* ---------- INNER PAGES ---------- */
+.page {
+    max-width: 760px;
+    margin: 0 auto;
+}
+
+.page ul,
+.page ol {
+    display: table;
+    margin: 0 auto;
+}
+
+.page li {
+    margin: 5px 0;
+}
+
+/* ---------- TABLE ---------- */
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th,
+td {
+    border: 1px solid rgb(194, 255, 97);
+    padding: 8px;
+    text-align: left;
+}
+
+th {
+    background-color: rgb(23, 99, 0);
+    color: rgb(0, 255, 157);
+}
+
+td {
+    color: rgb(194, 255, 97);
+}
+
+/* ---------- LISTS ---------- */
+li {
+    color: rgb(0, 174, 255);
+}
+
+/* ---------- FORMS ---------- */
+input,
+select,
+textarea {
+    display: block;
+    width: 100%;
+    max-width: 320px;
+    margin: 10px auto;
+    padding: 10px;
+    border: 1px solid chartreuse;
+    border-radius: 8px;
+    background-color: black;
+    color: white;
+    font-family: 'Rajdhani', Arial, sans-serif;
+    font-size: 15px;
+}
+
+textarea {
+    max-width: 420px;
+    resize: vertical;
+}
+
+/* ---------- FOOTER ---------- */
+footer {
+    text-align: center;
+    color: rgb(194, 255, 97);
+}
+
+
