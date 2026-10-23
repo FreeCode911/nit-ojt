@@ -1,0 +1,181 @@
+/* =========================================
+   style.css
+   One single CSS file shared by ALL pages.
+   Change colors here and the whole
+   website updates at once.
+   ========================================= */
+
+/* ---------- Global (applies to every page) ---------- */
+
+* {
+    box-sizing: border-box;   /* makes padding/width easier for beginners */
+}
+
+body {
+    margin: 0;                                  /* removes browser's default gap around the page */
+    font-family: Arial, Helvetica, sans-serif;  /* simple, readable font */
+    background-color: #f4f6fb;                  /* light blue-grey background */
+    color: #333;                                /* dark grey text color */
+}
+
+/* ---------- Navigation bar (shared by all pages) ---------- */
+
+nav {
+    background-color: #2c3e70;   /* dark blue navbar */
+    padding: 15px 30px;
+}
+
+/* The site name inside the navbar */
+nav .logo {
+    color: #fff;
+    font-size: 20px;
+    font-weight: bold;
+    text-decoration: none;   /* removes underline from the link */
+}
+
+/* The list of links inside the navbar */
+nav ul {
+    list-style: none;   /* removes the bullet dots */
+    margin: 10px 0 0 0;
+    padding: 0;
+}
+
+/* Each link in the navbar */
+nav ul li {
+    display: inline-block;  /* puts the links side by side */
+    margin-right: 20px;
+}
+
+/* Style of every navbar link */
+nav ul li a {
+    color: #fff;
+    text-decoration: none;  /* no underline */
+    font-size: 16px;
+}
+
+/* Color a link gets when your mouse is over it */
+nav ul li a:hover {
+    color: #ffcc00;   /* yellow highlight */
+}
+
+/* ---------- Hero banner (only on index.html) ---------- */
+
+.hero {
+    text-align: center;            /* center the text */
+    padding: 60px 20px;            /* big inner space so it looks like a banner */
+    background-color: #dce6ff;     /* soft blue banner background */
+}
+
+.hero h1 {
+    margin: 0 0 10px 0;
+    color: #2c3e70;
+}
+
+/* ---------- Buttons ---------- */
+
+.btn {
+    display: inline-block;         /* lets us add padding like a real button */
+    padding: 10px 25px;
+    margin: 5px;
+    background-color: #2c3e70;     /* dark blue button */
+    color: #fff;
+    text-decoration: none;         /* no underline on link-buttons */
+    border: none;
+    border-radius: 5px;            /* rounded corners */
+    cursor: pointer;               /* hand cursor on hover */
+    font-size: 16px;
+}
+
+/* Same button but yellow, used as the "second" option */
+.btn-yellow {
+    background-color: #ffcc00;
+    color: #333;
+}
+
+/* ---------- Page title under the navbar ---------- */
+
+.page-title {
+    text-align: center;
+    color: #2c3e70;
+    margin: 30px 0;
+}
+
+/* ---------- Cards (used on index, clubs, events pages) ---------- */
+
+/* The row that holds the cards side by side */
+.cards {
+    display: flex;          /* modern way to place items in a row */
+    flex-wrap: wrap;        /* drops to a new line on small screens */
+    justify-content: center;
+    padding: 20px;
+    gap: 20px;              /* space between the cards */
+}
+
+/* One single white box */
+.card {
+    background-color: #fff;
+    padding: 20px;
+    width: 260px;
+    border-radius: 8px;                 /* rounded corners */
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);  /* soft shadow */
+    text-align: center;
+}
+
+.card h3 {
+    margin-top: 0;
+    color: #2c3e70;
+}
+
+/* ---------- Contact form (contact.html) ---------- */
+
+/* The white box that holds the form */
+.contact-form {
+    max-width: 500px;          /* keeps the form not too wide */
+    margin: 0 auto 40px auto;  /* auto sides = centered on the page */
+    background-color: #fff;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+/* Every label and input sits on its own line */
+.contact-form label {
+    display: block;      /* pushes the next item to a new line */
+    margin-top: 15px;
+    font-weight: bold;
+}
+
+/* Text boxes and the message area */
+.contact-form input,
+.contact-form textarea {
+    width: 100%;              /* fills the full width of the box */
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-family: inherit;     /* same font as everything else */
+}
+
+/* Makes the message box taller than the inputs */
+.contact-form textarea {
+    height: 100px;
+}
+
+/* ---------- Simple text sections (about us / footer) ---------- */
+
+.section {
+    max-width: 700px;
+    margin: 0 auto 40px auto;
+    text-align: center;
+    line-height: 1.6;   /* a little more space between lines */
+}
+
+/* ---------- Footer (shared by all pages) ---------- */
+
+footer {
+    text-align: center;
+    padding: 20px;
+    background-color: #2c3e70;
+    color: #fff;
+    margin-top: 30px;
+}
