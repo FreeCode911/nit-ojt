@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <link rel="icon" type="image/png" href="201818.png">
     <title>Home | NeonPlay</title>
@@ -14,7 +17,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark site-navbar sticky-top">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center" href="index.html">
-                <span class="brand-mark">N</span>NEONPLAY
+                <span class="brand-mark">N</span><span class="brand-name">NEONPLAY</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                     data-bs-target="#mainNav" aria-controls="mainNav"
@@ -22,95 +25,228 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="mainNav">
-                <ul class="navbar-nav ms-auto">
+                <ul class="navbar-nav ms-auto align-items-lg-center">
                     <li class="nav-item"><a class="nav-link active" href="index.html">Home</a></li>
                     <li class="nav-item"><a class="nav-link" href="games.html">Games</a></li>
                     <li class="nav-item"><a class="nav-link" href="news.html">News</a></li>
                     <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
+                    <li class="nav-item ms-lg-3 mt-2 mt-lg-0">
+                        <a class="btn btn-primary btn-sm px-3" href="games.html">Play Free</a>
+                    </li>
                 </ul>
             </div>
         </div>
     </nav>
 
-    <!-- ===== PAGE CONTENT ===== -->
-    <div class="container py-4">
-
-        <!-- Announcement (Bootstrap alert, click X to close) -->
+    <!-- Announcement (Bootstrap alert, click X to close) -->
+    <div class="container pt-4">
         <div class="alert alert-info alert-dismissible fade show" role="alert">
             <strong>Season 4 is live!</strong> Double XP for the first week.
             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
-
-        <!-- Hero banner -->
-        <div class="card p-4 p-md-5 mb-5 shadow-sm">
-            <div class="row align-items-center g-4">
-                <div class="col-lg-8">
-                    <span class="badge bg-primary mb-3">Season 4 is live</span>
-                    <h1 class="display-4 mb-3">Level up<br>your game.</h1>
-                    <p class="lead text-muted mb-4">Play fast, compete hard and climb the ranks. Pick a game and jump in.</p>
-                    <a href="games.html" class="btn btn-primary btn-lg me-2">Browse Games</a>
-                    <a href="news.html" class="btn btn-outline-light btn-lg">Latest News</a>
-                </div>
-                <div class="col-lg-4 text-center d-none d-lg-block">
-                    <div class="hero-art">🎮</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Featured games -->
-        <h2 class="text-center mb-4">Featured Games</h2>
-        <div class="row g-4 justify-content-center">
-
-            <div class="col-sm-6 col-lg-4">
-                <div class="card h-100 shadow-sm">
-                    <div class="cover cover-racing">🏎️</div>
-                    <div class="card-body d-flex flex-column">
-                        <span class="badge bg-light text-dark border rounded-pill align-self-start mb-2">Racing</span>
-                        <h3 class="card-title h5">Neon Racer</h3>
-                        <p class="card-text text-muted">Speed through a glowing city at 300 km/h.</p>
-                        <a href="games.html" class="btn btn-primary btn-sm mt-auto">Play Now</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-sm-6 col-lg-4">
-                <div class="card h-100 shadow-sm">
-                    <div class="cover cover-action">⚔️</div>
-                    <div class="card-body d-flex flex-column">
-                        <span class="badge bg-light text-dark border rounded-pill align-self-start mb-2">Action</span>
-                        <h3 class="card-title h5">Shadow Strike</h3>
-                        <p class="card-text text-muted">Fast sword combat in dark alleys.</p>
-                        <a href="games.html" class="btn btn-primary btn-sm mt-auto">Play Now</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-sm-6 col-lg-4">
-                <div class="card h-100 shadow-sm">
-                    <div class="cover cover-shooter">🎯</div>
-                    <div class="card-body d-flex flex-column">
-                        <span class="badge bg-light text-dark border rounded-pill align-self-start mb-2">Shooter</span>
-                        <h3 class="card-title h5">Battle Arena</h3>
-                        <p class="card-text text-muted">5v5 online shooter with ranked matches.</p>
-                        <a href="games.html" class="btn btn-primary btn-sm mt-auto">Play Now</a>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-
-        <!-- About -->
-        <h2 class="text-center mt-5 mb-3">About Us</h2>
-        <p class="text-center mx-auto text-muted" style="max-width: 700px;">
-            NeonPlay is a small gaming site for players who love fast matches,
-            bright worlds and friendly competition. Pick a game, jump in and
-            have fun!
-        </p>
     </div>
 
+    <!-- ===== HERO BAND (full width) ===== -->
+    <header class="hero-band">
+        <div class="container">
+            <div class="row align-items-center g-4">
+                <div class="col-lg-6">
+                    <p class="eyebrow mb-3">Season 4 &mdash; live now</p>
+                    <h1 class="hero-title mb-3">Level up<br>your game</h1>
+                    <p class="lead text-muted mb-4" style="max-width: 520px;">
+                        Play fast, compete hard and climb the ranks.
+                        Six games, one arena &mdash; jump in tonight.
+                    </p>
+                    <a href="games.html" class="btn btn-primary btn-lg me-2 mb-2">Browse Games</a>
+                    <a href="news.html" class="btn btn-outline-light btn-lg mb-2">Latest News</a>
+                </div>
+                <div class="col-lg-6">
+                    <img class="hero-art-img" src="images/hero.jpg" alt="Forza Horizon 5">
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ===== STAT STRIP ===== -->
+    <section class="stat-strip">
+        <div class="container">
+            <div class="row g-0 text-center">
+                <div class="col-6 col-lg-3 stat">
+                    <div class="stat-num">120K</div>
+                    <div class="stat-label">Active players</div>
+                </div>
+                <div class="col-6 col-lg-3 stat">
+                    <div class="stat-num">6</div>
+                    <div class="stat-label">Games</div>
+                </div>
+                <div class="col-6 col-lg-3 stat">
+                    <div class="stat-num">12</div>
+                    <div class="stat-label">Tournaments</div>
+                </div>
+                <div class="col-6 col-lg-3 stat">
+                    <div class="stat-num">4.8</div>
+                    <div class="stat-label">Player rating</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== FEATURED GAMES ===== -->
+    <section class="section">
+        <div class="container">
+            <div class="section-head">
+                <div>
+                    <p class="section-eyebrow mb-1">Our games</p>
+                    <h2 class="section-title">Featured games</h2>
+                </div>
+                <a href="games.html" class="section-link">View all games</a>
+            </div>
+
+            <div class="row g-4">
+
+                <div class="col-sm-6 col-lg-4">
+                    <div class="card h-100 shadow-sm">
+                        <img class="cover-img" src="images/forza-horizon-5.jpg" alt="Forza Horizon 5">
+                        <div class="card-body d-flex flex-column">
+                            <span class="genre">Racing</span>
+                            <h3 class="card-title">Forza Horizon 5</h3>
+                            <p class="card-text">Open-world racing across Mexico with supercars.</p>
+                            <a href="games.html" class="btn btn-primary btn-sm mt-auto align-self-start">Play Now</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-6 col-lg-4">
+                    <div class="card h-100 shadow-sm">
+                        <img class="cover-img" src="images/cyberpunk-2077.jpg" alt="Cyberpunk 2077">
+                        <div class="card-body d-flex flex-column">
+                            <span class="genre">Action</span>
+                            <h3 class="card-title">Cyberpunk 2077</h3>
+                            <p class="card-text">Night City RPG with story, guns and mods.</p>
+                            <a href="games.html" class="btn btn-primary btn-sm mt-auto align-self-start">Play Now</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-6 col-lg-4">
+                    <div class="card h-100 shadow-sm">
+                        <img class="cover-img" src="images/counter-strike-2.jpg" alt="Counter-Strike 2">
+                        <div class="card-body d-flex flex-column">
+                            <span class="genre">Shooter</span>
+                            <h3 class="card-title">Counter-Strike 2</h3>
+                            <p class="card-text">5v5 tactical shooter with ranked matches.</p>
+                            <a href="games.html" class="btn btn-primary btn-sm mt-auto align-self-start">Play Now</a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== LATEST NEWS (stacked rows) ===== -->
+    <section class="section pt-0">
+        <div class="container">
+            <div class="section-head">
+                <div>
+                    <p class="section-eyebrow mb-1">From the studio</p>
+                    <h2 class="section-title">Latest news</h2>
+                </div>
+                <a href="news.html" class="section-link">All news</a>
+            </div>
+
+            <div class="list-rows">
+                <div class="news-row">
+                    <span class="date">22 Oct 2026</span>
+                    <span class="title">Season 4 starts now</span>
+                    <a href="news.html" class="btn btn-outline-primary btn-sm">Read</a>
+                </div>
+                <div class="news-row">
+                    <span class="date">18 Oct 2026</span>
+                    <span class="title">New map: Neon District</span>
+                    <a href="news.html" class="btn btn-outline-primary btn-sm">Read</a>
+                </div>
+                <div class="news-row">
+                    <span class="date">12 Oct 2026</span>
+                    <span class="title">Tournament this weekend</span>
+                    <a href="news.html" class="btn btn-outline-primary btn-sm">Read</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== ABOUT ===== -->
+    <section class="section pt-0">
+        <div class="container">
+            <div class="section-head">
+                <div>
+                    <p class="section-eyebrow mb-1">Who we are</p>
+                    <h2 class="section-title">About NeonPlay</h2>
+                </div>
+            </div>
+            <p class="text-muted" style="max-width: 720px;">
+                NeonPlay is a small gaming site for players who love fast matches,
+                bright worlds and friendly competition. Pick a game, jump in and
+                have fun!
+            </p>
+        </div>
+    </section>
+
+    <!-- ===== CALL TO ACTION ===== -->
+    <section class="cta-band">
+        <div class="container d-md-flex align-items-center justify-content-between">
+            <div class="mb-3 mb-md-0">
+                <p class="section-eyebrow mb-1">Ready?</p>
+                <h2 class="section-title mb-0">Play free tonight</h2>
+            </div>
+            <a href="contact.html" class="btn btn-primary btn-lg">Join NeonPlay</a>
+        </div>
+    </section>
+
     <!-- ===== FOOTER ===== -->
-    <footer class="py-4 mt-5 bg-dark text-white-50">
-        <p class="mb-0 text-center">&copy; 2026 NeonPlay. All rights reserved.</p>
+    <footer class="pt-5 pb-4">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-lg-4">
+                    <div class="d-flex align-items-center">
+                        <span class="brand-mark">N</span><span class="brand-name">NEONPLAY</span>
+                    </div>
+                    <p class="small mt-3 mb-0" style="max-width: 300px;">
+                        Fast, friendly gaming for everyone. Six games, one arena.
+                    </p>
+                </div>
+                <div class="col-6 col-md-3 col-lg-2 offset-lg-1">
+                    <h2 class="footer-title">Pages</h2>
+                    <ul class="footer-links">
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="games.html">Games</a></li>
+                        <li><a href="news.html">News</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-6 col-md-3 col-lg-2">
+                    <h2 class="footer-title">Games</h2>
+                    <ul class="footer-links">
+                        <li><a href="games.html">Forza Horizon 5</a></li>
+                        <li><a href="games.html">Cyberpunk 2077</a></li>
+                        <li><a href="games.html">Counter-Strike 2</a></li>
+                        <li><a href="games.html">No Man's Sky</a></li>
+                    </ul>
+                </div>
+                <div class="col-6 col-md-3 col-lg-3">
+                    <h2 class="footer-title">Follow</h2>
+                    <ul class="footer-links">
+                        <li><a href="#">Discord</a></li>
+                        <li><a href="#">Twitch</a></li>
+                        <li><a href="#">YouTube</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom d-flex flex-column flex-md-row justify-content-between gap-2">
+                <p class="mb-0">&copy; 2026 NeonPlay. All rights reserved.</p>
+                <p class="mb-0">Built with Bootstrap</p>
+            </div>
+        </div>
     </footer>
 
     <!-- Bootstrap JavaScript (needed for the mobile menu) -->
