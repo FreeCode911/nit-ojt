@@ -1,0 +1,120 @@
+/* =========================================
+   NEONPLAY - simple dark theme
+   Most of the look comes from Bootstrap.
+   This file only changes the colours.
+   ========================================= */
+
+:root {
+    --bg: #16181d;        /* page background */
+    --panel: #1f2229;     /* cards and panels */
+    --line: #2c313a;      /* borders */
+    --text: #e7e9ee;      /* main text */
+    --muted: #9aa1af;     /* secondary text */
+    --accent: #4dabf7;    /* links and small highlights */
+}
+
+body {
+    background-color: var(--bg);
+    color: var(--text);
+}
+
+/* Small square logo next to the brand name */
+.brand-mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    margin-right: 8px;
+    background-color: var(--accent);
+    color: #101218;
+    border-radius: 6px;
+    font-weight: 700;
+}
+
+/* Navbar */
+.site-navbar {
+    background-color: #1b1e24;
+    border-bottom: 1px solid var(--line);
+}
+
+.navbar-dark .navbar-nav .nav-link {
+    color: var(--text);
+}
+
+.navbar-dark .navbar-nav .nav-link.active {
+    color: var(--accent);
+}
+
+/* Hero picture tile */
+.hero-art {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background-color: #242b36;
+    border-radius: 16px;
+    font-size: 5rem;
+    line-height: 1;
+}
+
+/* Cards */
+.card {
+    background-color: var(--panel);
+    border-color: var(--line);
+    color: var(--text);
+}
+
+/* Text colours for the dark background */
+.text-muted {
+    color: var(--muted) !important;
+}
+
+.text-primary {
+    color: var(--accent) !important;
+}
+
+/* Outline buttons need a lighter colour on dark */
+.btn-outline-primary {
+    color: var(--accent);
+    border-color: var(--accent);
+}
+
+/* Alert */
+.alert-info {
+    background-color: #10253a;
+    border-color: #1f3d5c;
+    color: #cfe8ff;
+}
+
+/* Forms */
+.form-control {
+    background-color: #12141a;
+    border-color: var(--line);
+    color: var(--text);
+}
+
+.form-control::placeholder {
+    color: #7b8294;
+}
+
+.form-control:focus {
+    background-color: #12141a;
+    color: var(--text);
+}
+
+/* Game cover: flat colour block instead of an image */
+.cover {
+    height: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+}
+
+.cover-racing    { background-color: #ffb347; }
+.cover-action    { background-color: #ff7a90; }
+.cover-space     { background-color: #6f9bff; }
+.cover-adventure { background-color: #4ecfa0; }
+.cover-shooter   { background-color: #b48cff; }
+.cover-puzzle    { background-color: #ffd166; }
