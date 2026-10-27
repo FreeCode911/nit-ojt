@@ -88,6 +88,45 @@ body {
     padding: 0;
 }
 
+/* ---------- Search box (filters the file list) ---------- */
+
+.search-box {
+    width: 100%;
+    box-sizing: border-box;
+    margin: 0 0 12px;
+    padding: 10px 12px;
+    background-color: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    color: var(--text);
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.15s, background-color 0.15s;
+}
+
+.search-box::placeholder {
+    color: var(--muted);
+    opacity: 1;
+}
+
+.search-box:focus {
+    border-color: var(--accent);
+    background-color: rgba(77, 171, 247, 0.1);
+}
+
+/* message shown when nothing matches */
+.no-results {
+    width: 100%;
+    padding: 16px 12px;
+    border: 1px dashed var(--line);
+    border-radius: 8px;
+    color: var(--muted);
+    font-size: 0.88rem;
+    line-height: 1.5;
+    text-align: center;
+    word-break: break-word;
+}
+
 /* one clickable file row (name button + download button) */
 .file-row {
     display: flex;
@@ -489,6 +528,12 @@ body {
     .sidebar h2 {
         font-size: 0.72rem;
         letter-spacing: 0.12em;
+    }
+
+    .search-box {
+        padding: 8px 10px;
+        font-size: 0.9rem;
+        margin-bottom: 10px;
     }
 
     .file-btn {

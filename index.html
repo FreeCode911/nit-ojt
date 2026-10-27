@@ -30,6 +30,11 @@
         <!-- File list (filled by library.js) -->
         <aside class="sidebar">
             <h2>Files <span id="fileCount"></span></h2>
+
+            <!-- search box: filters the list while you type -->
+            <input id="searchBox" class="search-box" type="search"
+                   placeholder="&#128269; Search files..." autocomplete="off" aria-label="Search files">
+
             <ul id="fileList"></ul>
             <!-- page buttons, only shown when files overflow -->
             <div id="pageBar" class="page-bar"></div>

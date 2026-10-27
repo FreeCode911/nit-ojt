@@ -18,7 +18,23 @@ var selectedName = names[0];     // the file open in the viewer
 
 var list = document.getElementById('fileList');
 var pageBar = document.getElementById('pageBar');
-document.getElementById('fileCount').textContent = '(' + names.length + ')';
+var countEl = document.getElementById('fileCount');
+
+// the search box (added at the top of the file list)
+var searchBox = document.getElementById('searchBox');
+var query = '';                     // what the user has typed, lower case
+
+countEl.textContent = '(' + names.length + ')';
+
+// file names that match what was typed (empty search = everything)
+function searchResults() {
+    if (!query) {
+        return names;
+    }
+    return names.filter(function (name) {
+        return name.toLowerCase().indexOf(query) !== -1;
+    });
+}
 
 // extension of a file name, e.g. "index.html" -> "html"
 function extOf(name) {
@@ -38,8 +54,27 @@ function esc(s) {
 function renderList() {
     list.innerHTML = '';
 
-    var start = (currentPage - 1) * PER_PAGE;
-    var pageNames = names.slice(start, start + PER_PAGE);
+    var matches = searchResults();
+
+    // (14) normally, (3/14) while searching
+    countEl.textContent = query
+        ? '(' + matches.length + '/' + names.length + ')'
+        : '(' + names.length + ')';
+
+    // nothing matched - show a message instead of an empty box
+    if (matches.length === 0) {
+        var empty = document.createElement('li');
+        empty.className = 'no-results';
+        empty.textContent = 'No file matches "' + searchBox.value.trim() + '"';
+        list.appendChild(empty);
+        pageBar.style.display = 'none';
+        return;
+    }
+
+    // a search shows every match at once, without page buttons
+    var pageNames = query
+        ? matches
+        : matches.slice((currentPage - 1) * PER_PAGE, (currentPage - 1) * PER_PAGE + PER_PAGE);
 
     pageNames.forEach(function (name) {
         var li = document.createElement('li');
@@ -85,7 +120,12 @@ function renderList() {
         list.appendChild(li);
     });
 
-    renderPages();
+    // page buttons stay hidden while a search is running
+    if (query) {
+        pageBar.style.display = 'none';
+    } else {
+        renderPages();
+    }
 }
 
 // 4b. Download one file (saves it to the computer)
@@ -137,6 +177,34 @@ function renderPages() {
         })(i);
     }
 }
+
+// 4c. Search box: the list filters while you type
+function applySearch() {
+    query = searchBox.value.trim().toLowerCase();
+    currentPage = 1;                 // always start from the top again
+    renderList();
+}
+
+searchBox.addEventListener('input', applySearch);      // typing
+searchBox.addEventListener('search', applySearch);     // the little "x" / Escape
+
+// Enter opens the first match, Escape clears the box
+searchBox.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') {
+        var first = searchResults()[0];
+        if (first) {
+            selectedName = first;
+            showFile(first);
+            renderList();
+        }
+    }
+
+    if (e.key === 'Escape') {
+        searchBox.value = '';
+        applySearch();
+        searchBox.focus();
+    }
+});
 
 // 5. Show one file in the viewer
 var codeEl = document.getElementById('code');
