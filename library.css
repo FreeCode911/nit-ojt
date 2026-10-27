@@ -219,6 +219,43 @@ a:focus-visible {
     padding: 0;
 }
 
+/* ---------- Folder tabs (one per folder inside ME) ---------- */
+
+.tab-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 0 0 12px;
+}
+
+.tab-btn {
+    flex: 1;
+    min-width: 0;
+    padding: 7px 10px;
+    background-color: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-xs);
+    color: var(--muted);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: border-color 0.15s, background-color 0.15s, color 0.15s;
+}
+
+.tab-btn:hover {
+    border-color: var(--accent);
+    background-color: rgba(77, 171, 247, 0.1);
+    color: var(--accent);
+}
+
+.tab-btn.active {
+    background-color: var(--accent);
+    border-color: var(--accent);
+    color: var(--accent-ink);
+}
+
 /* ---------- Search box (filters the file list) ---------- */
 
 .search-box {
@@ -696,6 +733,12 @@ a:focus-visible {
         padding: 9px 11px;
         font-size: 0.9rem;
         margin-bottom: 12px;
+    }
+
+    .tab-btn {
+        padding: 6px 8px;
+        font-size: 0.7rem;
+        letter-spacing: 0.06em;
     }
 
     .file-btn {

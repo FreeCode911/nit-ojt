@@ -5,13 +5,17 @@ $out  = "$PSScriptRoot\snippets.js"
 $exts = @('.html', '.htm', '.css', '.js', '.php', '.json', '.xml', '.txt', '.md')
 $skip = @('snippets.js')
 
-# all matching files, index.html always first
-$files = Get-ChildItem $src -File |
-         Where-Object { $exts -contains $_.Extension -and $skip -notcontains $_.Name } |
-         Sort-Object Name
+# every matching file, also the ones inside subfolders (ME\PHP\...)
+$files = Get-ChildItem $src -Recurse -File |
+         Where-Object { $exts -contains $_.Extension -and $skip -notcontains $_.Name }
+
+# the key is the path relative to ME, using / : "PHP/hello.php"
+$rel = $files | ForEach-Object { $_.FullName.Substring($src.Length + 1).Replace('\', '/') }
+
+# index.html always first, the rest in alphabetical order
 $names = @()
-if ($files.Name -contains 'index.html') { $names += 'index.html' }
-$names += ($files.Name | Where-Object { $_ -ne 'index.html' } | Sort-Object)
+if ($rel -contains 'index.html') { $names += 'index.html' }
+$names += ($rel | Where-Object { $_ -ne 'index.html' } | Sort-Object)
 
 # build "const FILES = { "name": "code", ... }" by hand (ConvertTo-Json breaks strings)
 $sb = New-Object System.Text.StringBuilder
@@ -19,7 +23,7 @@ $sb = New-Object System.Text.StringBuilder
 [void]$sb.Append("const FILES = {")
 $first = $true
 foreach ($n in $names) {
-    $text = Get-Content (Join-Path $src $n) -Raw -Encoding UTF8
+    $text = Get-Content (Join-Path $src ($n.Replace('/', '\'))) -Raw -Encoding UTF8
     $e = $text.Replace('\', '\\').Replace('"', '\"').Replace("`r", '\r').Replace("`n", '\n').Replace("`t", '\t')
     if (-not $first) { [void]$sb.Append(",") }
     $first = $false

@@ -11,6 +11,40 @@ names.sort(function (a, b) {
     return a.localeCompare(b);
 });
 
+// 1b. Tabs: the ME folder is the first tab, every folder
+//     inside ME gets its own tab (e.g. "PHP")
+var tabs = ['ME'];
+names.forEach(function (name) {
+    var slash = name.indexOf('/');
+    if (slash > 0) {
+        var folder = name.slice(0, slash);
+        if (tabs.indexOf(folder) === -1) {
+            tabs.push(folder);
+        }
+    }
+});
+var currentTab = 'ME';              // the tab we are looking at
+
+// the files that belong to the open tab
+function tabNames() {
+    return names.filter(function (name) {
+        if (currentTab === 'ME') {
+            return name.indexOf('/') === -1;             // top level = ME
+        }
+        return name.indexOf(currentTab + '/') === 0;     // inside that folder
+    });
+}
+
+// what a tab is called: the ME folder itself is shown as "HTML"
+function tabLabel(tab) {
+    return tab === 'ME' ? 'HTML' : tab;
+}
+
+// "PHP/hello.php" -> "hello.php" (the folder is already the tab name)
+function baseName(name) {
+    return name.split('/').pop();
+}
+
 // 2. Settings for the file list
 var PER_PAGE = 8;                // how many files on one page
 var currentPage = 1;             // the page we are on now
@@ -24,14 +58,15 @@ var countEl = document.getElementById('fileCount');
 var searchBox = document.getElementById('searchBox');
 var query = '';                     // what the user has typed, lower case
 
-countEl.textContent = '(' + names.length + ')';
+countEl.textContent = '(' + tabNames().length + ')';
 
-// file names that match what was typed (empty search = everything)
+// file names of the open tab that match what was typed (empty search = all)
 function searchResults() {
+    var files = tabNames();
     if (!query) {
-        return names;
+        return files;
     }
-    return names.filter(function (name) {
+    return files.filter(function (name) {
         return name.toLowerCase().indexOf(query) !== -1;
     });
 }
@@ -54,18 +89,21 @@ function esc(s) {
 function renderList() {
     list.innerHTML = '';
 
+    var files = tabNames();              // everything in the open tab
     var matches = searchResults();
 
-    // (14) normally, (3/14) while searching
+    // (13) normally, (3/13) while searching - counts are per tab
     countEl.textContent = query
-        ? '(' + matches.length + '/' + names.length + ')'
-        : '(' + names.length + ')';
+        ? '(' + matches.length + '/' + files.length + ')'
+        : '(' + files.length + ')';
 
-    // nothing matched - show a message instead of an empty box
+    // nothing to show - a message instead of an empty box
     if (matches.length === 0) {
         var empty = document.createElement('li');
         empty.className = 'no-results';
-        empty.textContent = 'No file matches "' + searchBox.value.trim() + '"';
+        empty.textContent = query
+            ? 'No file matches "' + searchBox.value.trim() + '"'
+            : 'This folder is empty';
         list.appendChild(empty);
         pageBar.style.display = 'none';
         return;
@@ -89,7 +127,7 @@ function renderList() {
 
         var nameSpan = document.createElement('span');
         nameSpan.className = 'f-name';
-        nameSpan.textContent = name;
+        nameSpan.textContent = baseName(name);    // file name only, no folder
 
         var ext = document.createElement('span');
         ext.className = 'type-badge ext-' + extOf(name);
@@ -109,8 +147,8 @@ function renderList() {
         dl.type = 'button';
         dl.className = 'dl-btn';
         dl.textContent = '\u2B07';            // down arrow
-        dl.title = 'Download ' + name;
-        dl.setAttribute('aria-label', 'Download ' + name);
+        dl.title = 'Download ' + baseName(name);
+        dl.setAttribute('aria-label', 'Download ' + baseName(name));
         dl.addEventListener('click', function () {
             downloadFile(name);
         });
@@ -146,7 +184,7 @@ function downloadFile(name) {
 
     var a = document.createElement('a');
     a.href = url;
-    a.download = name;                 // file name in the save dialog
+    a.download = name.split('/').pop();   // only the file name, not the folder
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -158,7 +196,7 @@ function downloadFile(name) {
 
 // 4. Draw the page buttons (only if the files overflow)
 function renderPages() {
-    var total = Math.ceil(names.length / PER_PAGE);
+    var total = Math.ceil(tabNames().length / PER_PAGE);
 
     pageBar.innerHTML = '';
     pageBar.style.display = total > 1 ? 'flex' : 'none';   // one page = no buttons
@@ -206,6 +244,37 @@ searchBox.addEventListener('keydown', function (e) {
     }
 });
 
+// 4d. Folder tabs above the list (ME / PHP / ...)
+var tabBar = document.getElementById('tabBar');
+
+function renderTabs() {
+    tabBar.innerHTML = '';
+
+    tabs.forEach(function (tab) {
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'tab-btn' + (tab === currentTab ? ' active' : '');
+        b.textContent = tabLabel(tab);
+        b.setAttribute('aria-pressed', tab === currentTab ? 'true' : 'false');
+        b.addEventListener('click', function () {
+            currentTab = tab;
+            currentPage = 1;
+            query = searchBox.value.trim().toLowerCase();
+
+            // open the first file of that tab if the current one is elsewhere
+            var files = tabNames();
+            if (files.length && files.indexOf(selectedName) === -1) {
+                selectedName = files[0];
+                showFile(selectedName);
+            }
+
+            renderTabs();
+            renderList();
+        });
+        tabBar.appendChild(b);
+    });
+}
+
 // 5. Show one file in the viewer
 var codeEl = document.getElementById('code');
 var nameEl = document.getElementById('fileName');
@@ -220,7 +289,7 @@ function showFile(name) {
     // show the code (textContent keeps it as plain text, so it is safe)
     var text = FILES[name];
     codeEl.textContent = text;
-    nameEl.textContent = name;
+    nameEl.textContent = baseName(name);      // file name only, no folder
     infoEl.textContent = text.split('\n').length + ' lines';
 
     // badge in the toolbar (HTML / CSS / JS)
@@ -335,7 +404,7 @@ function phpNote(name, reason) {
         '<div class="wrap">' +
         '<div class="status"><span class="pill bad">NO SERVER</span>' + reason + '</div>' +
         '<div class="page">' +
-        '<h1>' + esc(name) + '</h1>' +
+        '<h1>' + esc(baseName(name)) + '</h1>' +
         '<p>Open <b>http://nit.gt.tc/</b> and press <b>Preview</b> there &mdash; ' +
         'the server really runs this file, so you will see its output.</p>' +
         '<p>For now, here is the code:</p>' +
@@ -358,7 +427,7 @@ function phpResult(name, out) {
         return phpHead() +
             '<div class="bar">Real output &mdash; PHP executed on the server</div>' +
             '<div class="wrap">' + status +
-            '<div class="page"><h1>' + esc(name) + '</h1>' +
+            '<div class="page"><h1>' + esc(baseName(name)) + '</h1>' +
             '<p>The file ran without any error, but it printed nothing.</p></div>' +
             '</div></body></html>';
     }
@@ -386,7 +455,10 @@ function runPhp(name) {
             'You are looking at the file directly, so there is no server to run it.'));
     }
 
-    return fetch('ME/' + encodeURIComponent(name), { cache: 'no-store' })
+    // encode each folder/file part on its own: ME/PHP/hello.php stays readable
+    var path = 'ME/' + name.split('/').map(encodeURIComponent).join('/');
+
+    return fetch(path, { cache: 'no-store' })
         .then(function (res) {
             if (!res.ok) {
                 throw new Error('HTTP ' + res.status);
@@ -502,6 +574,7 @@ function selectCode() {
     sel.addRange(range);
 }
 
-// 7. Start: show the first file, draw the list
+// 7. Start: show the first file, draw the tabs and the list
+renderTabs();
 showFile(selectedName);
 renderList();
