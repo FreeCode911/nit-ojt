@@ -1,16 +1,23 @@
 /* =========================================
    library.css - code viewer theme
-   Refined dark navy: same colours, better
-   spacing, depth and focus states.
+   Liquid Glass (Apple WWDC25 style):
+   - glass only on panels / controls,
+     the code area stays opaque (their rule:
+     "glass in the navigation layer, never
+     on top of other glass")
+   - Regular material: blur 26px, 66% fill,
+     saturation 160% (Apple's Regular specs)
+   - hairline specular edges + capsule shapes
    ========================================= */
 
 :root {
     /* --- colours --- */
     --bg: #0b1120;                 /* page background */
-    --panel: #131c31;              /* boxes */
-    --panel-dark: #0d1526;         /* code area */
-    --line: #24314f;               /* borders */
-    --line-top: rgba(255, 255, 255, 0.07);  /* thin light edge on panels */
+    --panel: rgba(24, 34, 58, 0.72);  /* glass panel fill (see-through) */
+    --panel-solid: #131c31;        /* plain fallback where glass is off */
+    --panel-dark: #0d1526;         /* code area - always opaque */
+    --line: rgba(255, 255, 255, 0.12);        /* hairline borders */
+    --line-top: rgba(255, 255, 255, 0.22);    /* brighter top edge (light from above) */
     --text: #e6ecf7;               /* main text */
     --muted: #8ea0c0;              /* small text */
     --accent: #4dabf7;             /* blue highlight */
@@ -18,11 +25,24 @@
     --green: #22c55e;              /* copy button */
     --green-ink: #052b12;          /* text written on green */
 
+    /* --- Liquid Glass material --- */
+    --glass-blur: 26px;            /* how much the background melts away */
+    --glass-sat: 160%;             /* colours behind the glass stay vivid */
+    --glass-fill: 66%;             /* how solid the glass itself is */
+    --glass: rgba(22, 32, 55, 0.66);           /* the material */
+    --glass-soft: rgba(255, 255, 255, 0.045);  /* faint white wash */
+    --glass-line: rgba(255, 255, 255, 0.16);   /* hairline edge */
+    --glass-hi: linear-gradient(180deg,        /* specular highlight:
+                   rgba(255, 255, 255, 0.20),  /* bright top (light source) */
+                   rgba(255, 255, 255, 0) 45%);/* fades downwards */
+
     /* --- shapes and depth --- */
-    --radius: 14px;
-    --radius-sm: 10px;
-    --radius-xs: 8px;
-    --shadow: 0 18px 40px rgba(0, 0, 0, 0.38), 0 2px 8px rgba(0, 0, 0, 0.25);
+    --radius: 22px;                /* panels: big continuous corners */
+    --radius-sm: 12px;             /* cards and small boxes */
+    --radius-xs: 10px;
+    --pill: 999px;                 /* capsules - Apple's control shape */
+    --shadow: 0 24px 60px rgba(0, 0, 0, 0.45),
+              0 6px 18px rgba(0, 0, 0, 0.30);
     --shadow-soft: 0 4px 14px rgba(0, 0, 0, 0.25);
     --focus-ring: 0 0 0 3px rgba(77, 171, 247, 0.25);
 
@@ -264,14 +284,19 @@ a:focus-visible {
     min-width: 0;
 }
 
-/* panels: one soft shadow + a light top edge = depth without glare */
+/* panels = the glass: blurred background + hairline edges + light from above.
+   This is the only place backdrop-filter is used (Apple: never glass on glass) */
 .sidebar,
 .viewer {
-    background-color: var(--panel);
-    border: 1px solid var(--line);
-    border-top-color: var(--line-top);
+    background-color: var(--glass);
+    background-image: var(--glass-hi);      /* specular sheen, inside the glass */
+    border: 1px solid var(--glass-line);
+    border-top-color: rgba(255, 255, 255, 0.30);
     border-radius: var(--radius);
-    box-shadow: var(--shadow);
+    box-shadow: var(--shadow),
+                inset 0 1px 0 rgba(255, 255, 255, 0.16);  /* top hairline glow */
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat));
+    backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat));
 }
 
 /* ---------- Sidebar (file list) ---------- */
@@ -319,46 +344,49 @@ a:focus-visible {
     padding: 0;
 }
 
-/* ---------- Folder tabs (one per folder inside ME) ---------- */
+/* ---------- Folder tabs = an Apple segmented control ---------- */
 
 .tab-bar {
     display: flex;
     flex-wrap: wrap;
-    gap: 6px;
+    gap: 3px;
     margin: 0 0 12px;
+    padding: 3px;                      /* the track around the capsules */
+    background-color: rgba(0, 0, 0, 0.28);
+    border: 1px solid var(--glass-line);
+    border-radius: var(--pill);
+    box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.35);
 }
 
 .tab-btn {
     flex: 1;
     min-width: 0;
-    padding: 7px 10px;
-    background-color: rgba(255, 255, 255, 0.03);
-    border: 1px solid var(--line);
-    border-radius: var(--radius-xs);
+    padding: 7px 12px;
+    background-color: transparent;
+    border: 0;
+    border-radius: var(--pill);
     color: var(--muted);
     font-size: 0.75rem;
     font-weight: 700;
     letter-spacing: 0.1em;
     text-transform: uppercase;
     cursor: pointer;
-    transition: border-color 0.15s, background-color 0.15s,
-                color 0.15s, transform 0.15s;
+    transition: background-color 0.2s, color 0.2s,
+                transform 0.15s, box-shadow 0.2s;
 }
 
 .tab-btn:hover {
+    color: var(--text);
     transform: translateY(-1px);
 }
 
-.tab-btn:hover {
-    border-color: var(--accent);
-    background-color: rgba(77, 171, 247, 0.1);
-    color: var(--accent);
-}
-
+/* selected capsule: filled + lit from above, like iOS */
 .tab-btn.active {
     background-color: var(--accent);
-    border-color: var(--accent);
+    background-image: var(--glass-hi);
     color: var(--accent-ink);
+    box-shadow: 0 3px 10px rgba(77, 171, 247, 0.35),
+                inset 0 1px 0 rgba(255, 255, 255, 0.45);
 }
 
 /* ---------- Search box (filters the file list) ---------- */
@@ -366,10 +394,10 @@ a:focus-visible {
 .search-box {
     width: 100%;
     margin: 0 0 14px;
-    padding: 11px 13px;
-    background-color: rgba(255, 255, 255, 0.045);
-    border: 1px solid var(--line);
-    border-radius: var(--radius-sm);
+    padding: 11px 17px;
+    background-color: rgba(0, 0, 0, 0.30);   /* darker than the glass = pressed in */
+    border: 1px solid var(--glass-line);
+    border-radius: var(--pill);              /* capsule, like iOS search */
     color: var(--text);
     font-size: 0.95rem;
     outline: none;
@@ -382,13 +410,14 @@ a:focus-visible {
 }
 
 .search-box:hover {
-    border-color: #33436a;
+    border-color: rgba(255, 255, 255, 0.26);
 }
 
 .search-box:focus {
-    border-color: var(--accent);
-    background-color: rgba(77, 171, 247, 0.08);
-    box-shadow: var(--focus-ring);
+    border-color: rgba(77, 171, 247, 0.7);
+    background-color: rgba(0, 0, 0, 0.36);
+    box-shadow: var(--focus-ring),
+                inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
 /* message shown when nothing matches */
@@ -428,9 +457,9 @@ a:focus-visible {
     gap: 10px;
     width: 100%;
     min-height: 42px;
-    padding: 9px 12px;
-    background-color: rgba(255, 255, 255, 0.025);
-    border: 1px solid var(--line);
+    padding: 9px 14px;
+    background-color: var(--glass-soft);     /* faint wash over the panel */
+    border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: var(--radius-sm);
     color: var(--text);
     font-size: 0.95rem;
@@ -441,20 +470,24 @@ a:focus-visible {
 }
 
 .file-btn:hover {
-    border-color: var(--accent);
+    border-color: rgba(77, 171, 247, 0.55);
     background-color: rgba(77, 171, 247, 0.10);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.10);
 }
 
 .file-btn:active {
     background-color: rgba(77, 171, 247, 0.16);
 }
 
+/* selected: lit from inside (Apple: controls illuminate on press) */
 .file-btn.active {
     background-color: var(--accent);
-    border-color: var(--accent);
+    background-image: var(--glass-hi);
+    border-color: rgba(255, 255, 255, 0.35);
     color: var(--accent-ink);
     font-weight: 700;
-    box-shadow: 0 6px 16px rgba(77, 171, 247, 0.28);
+    box-shadow: 0 6px 16px rgba(77, 171, 247, 0.35),
+                inset 0 1px 0 rgba(255, 255, 255, 0.45);
 }
 
 /* long file names get cut with ... instead of breaking the row */
@@ -478,9 +511,9 @@ a:focus-visible {
 .page-btn {
     min-width: 34px;
     height: 32px;
-    background-color: rgba(255, 255, 255, 0.03);
-    border: 1px solid var(--line);
-    border-radius: var(--radius-xs);
+    background-color: var(--glass-soft);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--pill);         /* capsule */
     color: var(--muted);
     font-size: 0.85rem;
     font-weight: 700;
@@ -492,28 +525,27 @@ a:focus-visible {
 
 .page-btn:hover {
     transform: translateY(-1px);
-}
-
-.page-btn:hover {
-    border-color: var(--accent);
+    border-color: rgba(77, 171, 247, 0.55);
     background-color: rgba(77, 171, 247, 0.10);
     color: var(--accent);
 }
 
 .page-btn.current {
     background-color: var(--accent);
-    border-color: var(--accent);
+    background-image: var(--glass-hi);
+    border-color: rgba(255, 255, 255, 0.35);
     color: var(--accent-ink);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45);
 }
 
 /* ---------- Small type badge (HTML / CSS / JS) ---------- */
 
 .type-badge {
     flex-shrink: 0;
-    padding: 2px 7px;
-    background-color: rgba(255, 255, 255, 0.04);
-    border: 1px solid var(--line);
-    border-radius: 6px;
+    padding: 2px 9px;
+    background-color: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    border-radius: var(--pill);             /* capsule */
     color: var(--muted);
     font-size: 0.66rem;
     font-weight: 700;
@@ -537,9 +569,9 @@ a:focus-visible {
 .dl-btn {
     flex-shrink: 0;
     width: 38px;
-    background-color: rgba(255, 255, 255, 0.03);
-    border: 1px solid var(--line);
-    border-radius: var(--radius-sm);
+    background-color: var(--glass-soft);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--pill);         /* round glass chip */
     color: var(--muted);
     font-size: 0.95rem;
     cursor: pointer;
@@ -565,8 +597,11 @@ a:focus-visible {
     align-items: center;
     gap: 12px;
     padding: 15px 18px;
-    background-color: rgba(255, 255, 255, 0.035);
-    border-bottom: 1px solid var(--line);
+    background-color: rgba(255, 255, 255, 0.05);
+    background-image: linear-gradient(180deg,
+                rgba(255, 255, 255, 0.07),
+                rgba(255, 255, 255, 0));   /* faint sheen on the toolbar */
+    border-bottom: 1px solid var(--glass-line);
 }
 
 /* thin accent line fading out to the right */
@@ -596,10 +631,11 @@ a:focus-visible {
 /* line count as a pill */
 .file-info {
     margin-right: auto;
-    padding: 3px 11px;
+    padding: 3px 12px;
     background-color: rgba(255, 255, 255, 0.06);
-    border: 1px solid var(--line);
-    border-radius: 999px;
+    background-image: var(--glass-hi);      /* tiny glass chip */
+    border: 1px solid var(--glass-line);
+    border-radius: var(--pill);
     color: var(--muted);
     font-size: 0.78rem;
     font-variant-numeric: tabular-nums;
@@ -616,8 +652,8 @@ a:focus-visible {
     justify-content: center;
     gap: 8px;
     height: 36px;
-    padding: 0 16px;
-    border-radius: 9px;
+    padding: 0 18px;
+    border-radius: var(--pill);             /* capsule controls */
     font-size: 0.92rem;
     font-weight: 700;
     letter-spacing: 0.01em;
@@ -626,10 +662,11 @@ a:focus-visible {
                 color 0.15s, transform 0.12s, box-shadow 0.15s;
 }
 
+/* gel-like press: the control squishes a little, like iOS */
 .preview-btn:active,
 .download-btn:active,
 .copy-btn:active {
-    transform: translateY(1px);
+    transform: scale(0.96);
 }
 
 /* toolbar buttons float up on hover */
@@ -639,10 +676,10 @@ a:focus-visible {
     transform: translateY(-1px);
 }
 
-/* ghost button */
+/* ghost capsule */
 .preview-btn {
-    background-color: transparent;
-    border: 1px solid var(--accent);
+    background-color: rgba(77, 171, 247, 0.08);
+    border: 1px solid rgba(77, 171, 247, 0.55);
     color: var(--accent);
 }
 
@@ -650,24 +687,28 @@ a:focus-visible {
     background-color: rgba(77, 171, 247, 0.16);
 }
 
-/* solid blue = main action */
+/* solid blue = main action, lit from above */
 .download-btn {
     background-color: var(--accent);
+    background-image: var(--glass-hi);
     border: none;
     color: var(--accent-ink);
-    box-shadow: var(--shadow-soft);
+    box-shadow: var(--shadow-soft),
+                inset 0 1px 0 rgba(255, 255, 255, 0.45);
 }
 
 .download-btn:hover {
     background-color: #6bb9f9;
 }
 
-/* solid green = copy */
+/* solid green = copy, also lit from above */
 .copy-btn {
     background-color: var(--green);
+    background-image: var(--glass-hi);
     border: none;
     color: var(--green-ink);
-    box-shadow: var(--shadow-soft);
+    box-shadow: var(--shadow-soft),
+                inset 0 1px 0 rgba(255, 255, 255, 0.35);
 }
 
 .copy-btn:hover {
@@ -712,7 +753,7 @@ a:focus-visible {
     background-color: #fff;
 }
 
-/* ---------- Code area ---------- */
+/* ---------- Code area (content layer: stays fully opaque) ---------- */
 
 .code-box {
     margin: 0;
@@ -721,7 +762,8 @@ a:focus-visible {
     max-width: 100%;
     max-height: 70vh;
     overflow: auto;
-    background-color: var(--panel-dark);
+    background-color: var(--panel-dark);   /* never glass: you must be able
+                                              to read every single letter */
     color: #d8e5f7;
     font-family: var(--mono);
     font-size: 0.9rem;
@@ -764,7 +806,7 @@ a:focus-visible {
 
 .sidebar::-webkit-scrollbar-thumb {
     background-color: #2f4066;
-    border: 2px solid var(--panel);
+    border: 2px solid rgba(19, 28, 49, 0.9);
     border-radius: 8px;
 }
 
@@ -857,7 +899,7 @@ a:focus-visible {
 
     .sidebar {
         padding: 12px;
-        border-radius: 12px;
+        border-radius: 18px;          /* still glassy on small phones */
     }
 
     .sidebar h2 {
@@ -911,5 +953,36 @@ a:focus-visible {
 
     #previewFrame {
         height: 300px;
+    }
+}
+
+/* ---------- Glass fallbacks ---------- */
+
+/* browsers that cannot blur the background get plain solid panels */
+@supports not ((backdrop-filter: blur(2px)) or
+               (-webkit-backdrop-filter: blur(2px))) {
+    .sidebar,
+    .viewer {
+        background-color: var(--panel-solid);
+        background-image: none;
+    }
+}
+
+/* Windows "transparency effects" turned off -> solid panels too */
+@media (prefers-reduced-transparency: reduce) {
+    .sidebar,
+    .viewer {
+        background-color: var(--panel-solid);
+        background-image: none;
+        -webkit-backdrop-filter: none;
+        backdrop-filter: none;
+    }
+}
+
+/* browsers that understand Apple's squircle corners get the real shape */
+@supports (corner-shape: squircle) {
+    .sidebar,
+    .viewer {
+        corner-shape: squircle;
     }
 }
