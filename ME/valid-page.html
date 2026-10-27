@@ -57,12 +57,20 @@ button:hover {
 <script>
 function validateName() {
     let name = document.getElementById("name").value;
+    let nameError = document.getElementById("nameError");
 
-    if (name == "") {
-        document.getElementById("nameError").style.display = "block";
+    let namePattern = /^[A-Za-z\s]+$/;
+
+    if (name.trim() === "") {
+        nameError.innerText = "Enter your name";
+        nameError.style.display = "block";
+        return false;
+    } else if (!namePattern.test(name)) {
+        nameError.innerText = "Name must contain only letters";
+        nameError.style.display = "block";
         return false;
     } else {
-        document.getElementById("nameError").style.display = "none";
+        nameError.style.display = "none";
         return true;
     }
 }
