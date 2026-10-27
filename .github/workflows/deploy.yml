@@ -35,8 +35,15 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           server-dir: /htdocs/
-          # never upload git / actions / editor files
-          exclude: "**/.git/**, **/.github/**, **/.vscode/**"
+          # exclude list must be NEWLINE separated (one glob per line)
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/.github/**
+            **/.vscode/**
+            **/node_modules/**
           # keep files on the server that are not in the repo
           dangerous-clean-slate: false
-          timeout: 60
+          # IMPORTANT: this value is in MILLISECONDS (60000 = 60 seconds)
+          timeout: 60000
+          log-level: standard
