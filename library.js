@@ -49,6 +49,7 @@ function baseName(name) {
 var PER_PAGE = 8;                // how many files on one page
 var currentPage = 1;             // the page we are on now
 var selectedName = names[0];     // the file open in the viewer
+var lastListKey = '';            // what the list showed the last time
 
 var list = document.getElementById('fileList');
 var pageBar = document.getElementById('pageBar');
@@ -125,10 +126,21 @@ function renderList() {
         ? matches
         : matches.slice((currentPage - 1) * PER_PAGE, (currentPage - 1) * PER_PAGE + PER_PAGE);
 
+    // the rows may only "arrive one by one" when the list itself
+    // changed (other tab, page or search) - clicking a file only
+    // moves the highlight, so the rows must stay still
+    var listKey = currentTab + '|' + currentPage + '|' + query;
+    var animate = listKey !== lastListKey;
+    lastListKey = listKey;
+
     pageNames.forEach(function (name, i) {
         var li = document.createElement('li');
         li.className = 'file-row';
-        li.style.animationDelay = (i * 45) + 'ms';   // rows arrive one by one
+        if (animate) {
+            li.style.animationDelay = (i * 45) + 'ms';   // rows arrive one by one
+        } else {
+            li.classList.add('no-anim');                 // same list: do not replay
+        }
 
         var btn = document.createElement('button');
         btn.type = 'button';

@@ -216,6 +216,11 @@ a:focus-visible {
     animation: row-in 0.26s ease backwards;
 }
 
+/* same list redrawn (a file was clicked): rows stay still */
+.file-row.no-anim {
+    animation: none;
+}
+
 .preview-pane {
     animation: drop-in 0.3s ease;
 }
