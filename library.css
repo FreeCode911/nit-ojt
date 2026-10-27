@@ -1,18 +1,32 @@
 /* =========================================
    library.css - code viewer theme
+   Refined dark navy: same colours, better
+   spacing, depth and focus states.
    ========================================= */
 
 :root {
-    --bg: #0b1120;         /* page background */
-    --panel: #131c31;      /* boxes */
-    --panel-dark: #0d1526; /* code area */
-    --line: #24314f;       /* borders */
-    --text: #e6ecf7;       /* main text */
-    --muted: #8ea0c0;      /* small text */
-    --accent: #4dabf7;     /* blue highlight */
-    --green: #22c55e;      /* copy button */
-    --radius: 14px;        /* corner roundness */
-    --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+    /* --- colours --- */
+    --bg: #0b1120;                 /* page background */
+    --panel: #131c31;              /* boxes */
+    --panel-dark: #0d1526;         /* code area */
+    --line: #24314f;               /* borders */
+    --line-top: rgba(255, 255, 255, 0.07);  /* thin light edge on panels */
+    --text: #e6ecf7;               /* main text */
+    --muted: #8ea0c0;              /* small text */
+    --accent: #4dabf7;             /* blue highlight */
+    --accent-ink: #071726;         /* text written on blue */
+    --green: #22c55e;              /* copy button */
+    --green-ink: #052b12;          /* text written on green */
+
+    /* --- shapes and depth --- */
+    --radius: 14px;
+    --radius-sm: 10px;
+    --radius-xs: 8px;
+    --shadow: 0 18px 40px rgba(0, 0, 0, 0.38), 0 2px 8px rgba(0, 0, 0, 0.25);
+    --shadow-soft: 0 4px 14px rgba(0, 0, 0, 0.25);
+    --focus-ring: 0 0 0 3px rgba(77, 171, 247, 0.25);
+
+    --mono: Consolas, "Courier New", monospace;
 }
 
 * {
@@ -23,7 +37,23 @@ body {
     margin: 0;
     background-color: var(--bg);
     color: var(--text);
-    font-family: "Segoe UI", system-ui, Arial, sans-serif;
+    font-family: "Segoe UI Variable", "Segoe UI", system-ui, Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+}
+
+::selection {
+    background-color: rgba(77, 171, 247, 0.32);
+    color: #fff;
+}
+
+/* keyboard users always see where they are */
+button:focus-visible,
+a:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
 }
 
 /* ---------- Layout: sidebar + viewer ----------
@@ -32,10 +62,10 @@ body {
 
 .layout {
     display: grid;
-    grid-template-columns: 280px minmax(0, 1fr);
-    gap: 20px;
-    padding: 20px;
-    max-width: 1500px;
+    grid-template-columns: 286px minmax(0, 1fr);
+    gap: 22px;
+    padding: 22px;
+    max-width: 1520px;
     margin: 0 auto;
 }
 
@@ -44,30 +74,40 @@ body {
     min-width: 0;
 }
 
+/* panels: one soft shadow + a light top edge = depth without glare */
+.sidebar,
+.viewer {
+    background-color: var(--panel);
+    border: 1px solid var(--line);
+    border-top-color: var(--line-top);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+}
+
 /* ---------- Sidebar (file list) ---------- */
 
 .sidebar {
-    background-color: var(--panel);
-    border: 1px solid var(--line);
-    border-radius: var(--radius);
-    padding: 16px;
+    padding: 18px;
     height: fit-content;
     position: sticky;                         /* stays put while code scrolls */
-    top: 20px;
-    max-height: calc(100vh - 40px);
+    top: 22px;
+    max-height: calc(100vh - 44px);
     overflow-y: auto;
-    box-shadow: var(--shadow);
+    scrollbar-width: thin;
+    scrollbar-color: #2f4066 transparent;
 }
 
 .sidebar h2 {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 9px;
     margin: 0 0 14px;
-    font-size: 0.8rem;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--line);
+    font-size: 0.78rem;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.18em;
+    letter-spacing: 0.16em;
     color: var(--muted);
 }
 
@@ -75,10 +115,11 @@ body {
 #fileCount {
     padding: 2px 9px;
     background-color: rgba(77, 171, 247, 0.14);
-    border: 1px solid rgba(77, 171, 247, 0.45);
+    border: 1px solid rgba(77, 171, 247, 0.4);
     border-radius: 999px;
     color: var(--accent);
     font-size: 0.72rem;
+    font-variant-numeric: tabular-nums;
     letter-spacing: 0.05em;
 }
 
@@ -92,16 +133,15 @@ body {
 
 .search-box {
     width: 100%;
-    box-sizing: border-box;
-    margin: 0 0 12px;
-    padding: 10px 12px;
-    background-color: rgba(255, 255, 255, 0.04);
+    margin: 0 0 14px;
+    padding: 11px 13px;
+    background-color: rgba(255, 255, 255, 0.045);
     border: 1px solid var(--line);
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     color: var(--text);
     font-size: 0.95rem;
     outline: none;
-    transition: border-color 0.15s, background-color 0.15s;
+    transition: border-color 0.15s, background-color 0.15s, box-shadow 0.15s;
 }
 
 .search-box::placeholder {
@@ -109,20 +149,26 @@ body {
     opacity: 1;
 }
 
+.search-box:hover {
+    border-color: #33436a;
+}
+
 .search-box:focus {
     border-color: var(--accent);
-    background-color: rgba(77, 171, 247, 0.1);
+    background-color: rgba(77, 171, 247, 0.08);
+    box-shadow: var(--focus-ring);
 }
 
 /* message shown when nothing matches */
 .no-results {
     width: 100%;
-    padding: 16px 12px;
+    padding: 18px 12px;
+    background-color: rgba(255, 255, 255, 0.02);
     border: 1px dashed var(--line);
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     color: var(--muted);
     font-size: 0.88rem;
-    line-height: 1.5;
+    line-height: 1.55;
     text-align: center;
     word-break: break-word;
 }
@@ -132,7 +178,7 @@ body {
     display: flex;
     align-items: stretch;
     gap: 6px;
-    margin-bottom: 8px;
+    margin-bottom: 7px;
 }
 
 .file-btn {
@@ -143,10 +189,11 @@ body {
     justify-content: space-between;
     gap: 10px;
     width: 100%;
-    padding: 10px 12px;
-    background-color: rgba(255, 255, 255, 0.02);
+    min-height: 42px;
+    padding: 9px 12px;
+    background-color: rgba(255, 255, 255, 0.025);
     border: 1px solid var(--line);
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     color: var(--text);
     font-size: 0.95rem;
     text-align: left;
@@ -160,12 +207,16 @@ body {
     background-color: rgba(77, 171, 247, 0.10);
 }
 
+.file-btn:active {
+    background-color: rgba(77, 171, 247, 0.16);
+}
+
 .file-btn.active {
     background-color: var(--accent);
     border-color: var(--accent);
-    color: #08131f;
+    color: var(--accent-ink);
     font-weight: 700;
-    box-shadow: 0 6px 16px rgba(77, 171, 247, 0.35);
+    box-shadow: 0 6px 16px rgba(77, 171, 247, 0.28);
 }
 
 /* long file names get cut with ... instead of breaking the row */
@@ -181,33 +232,35 @@ body {
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
-    margin-top: 12px;
-    padding-top: 12px;
+    margin-top: 14px;
+    padding-top: 14px;
     border-top: 1px solid var(--line);
 }
 
 .page-btn {
     min-width: 34px;
-    padding: 6px 0;
+    height: 32px;
     background-color: rgba(255, 255, 255, 0.03);
     border: 1px solid var(--line);
-    border-radius: 8px;
+    border-radius: var(--radius-xs);
     color: var(--muted);
     font-size: 0.85rem;
     font-weight: 700;
+    font-variant-numeric: tabular-nums;
     cursor: pointer;
     transition: border-color 0.15s, background-color 0.15s, color 0.15s;
 }
 
 .page-btn:hover {
     border-color: var(--accent);
+    background-color: rgba(77, 171, 247, 0.10);
     color: var(--accent);
 }
 
 .page-btn.current {
     background-color: var(--accent);
     border-color: var(--accent);
-    color: #08131f;
+    color: var(--accent-ink);
 }
 
 /* ---------- Small type badge (HTML / CSS / JS) ---------- */
@@ -217,7 +270,7 @@ body {
     padding: 2px 7px;
     background-color: rgba(255, 255, 255, 0.04);
     border: 1px solid var(--line);
-    border-radius: 5px;
+    border-radius: 6px;
     color: var(--muted);
     font-size: 0.66rem;
     font-weight: 700;
@@ -234,7 +287,7 @@ body {
 .file-btn.active .type-badge {
     background-color: rgba(0, 0, 0, 0.22);
     border-color: transparent;
-    color: #08131f;
+    color: var(--accent-ink);
 }
 
 /* small download button on every file row */
@@ -243,7 +296,7 @@ body {
     width: 38px;
     background-color: rgba(255, 255, 255, 0.03);
     border: 1px solid var(--line);
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     color: var(--muted);
     font-size: 0.95rem;
     cursor: pointer;
@@ -259,26 +312,25 @@ body {
 /* ---------- Code viewer ---------- */
 
 .viewer {
-    background-color: var(--panel);
-    border: 1px solid var(--line);
-    border-radius: var(--radius);
     overflow: hidden;
-    box-shadow: var(--shadow);
 }
 
 .viewer-head {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 10px;
-    padding: 14px 16px;
-    background-color: rgba(255, 255, 255, 0.03);
+    gap: 12px;
+    padding: 15px 18px;
+    background-color: rgba(255, 255, 255, 0.035);
     border-bottom: 1px solid var(--line);
 }
 
+/* the open file name, set in the code font */
 .file-name {
-    font-size: 1.05rem;
+    font-family: var(--mono);
+    font-size: 1.08rem;
     font-weight: 700;
+    letter-spacing: -0.01em;
     color: #fff;
     word-break: break-all;
 }
@@ -286,60 +338,75 @@ body {
 /* line count as a pill */
 .file-info {
     margin-right: auto;
-    padding: 3px 10px;
+    padding: 3px 11px;
     background-color: rgba(255, 255, 255, 0.06);
+    border: 1px solid var(--line);
     border-radius: 999px;
     color: var(--muted);
     font-size: 0.78rem;
+    font-variant-numeric: tabular-nums;
     letter-spacing: 0.04em;
 }
 
-/* ---------- Preview button ---------- */
+/* ---------- Toolbar buttons (same height, three roles) ---------- */
 
-.preview-btn {
+.preview-btn,
+.download-btn,
+.copy-btn {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
-    padding: 9px 18px;
+    height: 36px;
+    padding: 0 16px;
+    border-radius: 9px;
+    font-size: 0.92rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    cursor: pointer;
+    transition: background-color 0.15s, border-color 0.15s,
+                color 0.15s, transform 0.12s, box-shadow 0.15s;
+}
+
+.preview-btn:active,
+.download-btn:active,
+.copy-btn:active {
+    transform: translateY(1px);
+}
+
+/* ghost button */
+.preview-btn {
     background-color: transparent;
     border: 1px solid var(--accent);
-    border-radius: 8px;
     color: var(--accent);
-    font-size: 0.95rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: background-color 0.15s, color 0.15s;
 }
 
 .preview-btn:hover {
     background-color: rgba(77, 171, 247, 0.16);
 }
 
-/* ---------- Download button (toolbar) ---------- */
-
+/* solid blue = main action */
 .download-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 9px 18px;
     background-color: var(--accent);
     border: none;
-    border-radius: 8px;
-    color: #071726;
-    font-size: 0.95rem;
-    font-weight: 700;
-    cursor: pointer;
-    box-shadow: 0 6px 16px rgba(77, 171, 247, 0.28);
-    transition: background-color 0.15s, transform 0.15s, box-shadow 0.15s;
+    color: var(--accent-ink);
+    box-shadow: var(--shadow-soft);
 }
 
 .download-btn:hover {
     background-color: #6bb9f9;
 }
 
-.download-btn:active {
-    transform: translateY(1px);
-    box-shadow: 0 3px 8px rgba(77, 171, 247, 0.25);
+/* solid green = copy */
+.copy-btn {
+    background-color: var(--green);
+    border: none;
+    color: var(--green-ink);
+    box-shadow: var(--shadow-soft);
+}
+
+.copy-btn:hover {
+    background-color: #2dd466;
 }
 
 /* ---------- Live preview pane ---------- */
@@ -350,8 +417,12 @@ body {
 }
 
 .preview-bar {
-    padding: 7px 14px;
-    background-color: rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 16px;
+    background-color: rgba(0, 0, 0, 0.32);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     color: var(--muted);
     font-size: 0.7rem;
     font-weight: 700;
@@ -359,60 +430,51 @@ body {
     text-transform: uppercase;
 }
 
+/* little dot before the label */
+.preview-bar::before {
+    content: "";
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background-color: var(--green);
+}
+
 #previewFrame {
     display: block;
     width: 100%;
-    height: 420px;
+    height: 430px;
     border: 0;
     background-color: #fff;
-}
-
-/* ---------- Copy button ---------- */
-
-.copy-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 9px 22px;
-    background-color: var(--green);
-    border: none;
-    border-radius: 8px;
-    color: #052b12;
-    font-size: 0.95rem;
-    font-weight: 700;
-    cursor: pointer;
-    box-shadow: 0 6px 16px rgba(34, 197, 94, 0.28);
-    transition: background-color 0.15s, transform 0.15s, box-shadow 0.15s;
-}
-
-.copy-btn:hover {
-    background-color: #2dd466;
-}
-
-.copy-btn:active {
-    transform: translateY(1px);
-    box-shadow: 0 3px 8px rgba(34, 197, 94, 0.25);
 }
 
 /* ---------- Code area ---------- */
 
 .code-box {
     margin: 0;
-    padding: 18px;
+    padding: 20px 22px;
+    min-height: 45vh;
     max-width: 100%;
     max-height: 70vh;
     overflow: auto;
     background-color: var(--panel-dark);
     color: #d8e5f7;
-    font-family: Consolas, "Courier New", monospace;
+    font-family: var(--mono);
     font-size: 0.9rem;
-    line-height: 1.6;
+    line-height: 1.7;
+    caret-color: var(--accent);
     tab-size: 4;
     white-space: pre;
+    scrollbar-width: thin;
+    scrollbar-color: #2f4066 transparent;
+}
+
+.code-box code {
+    font: inherit;
 }
 
 /* slim rounded scrollbars */
-.code-box::-webkit-scrollbar {
+.code-box::-webkit-scrollbar,
+.sidebar::-webkit-scrollbar {
     width: 10px;
     height: 10px;
 }
@@ -422,17 +484,13 @@ body {
 }
 
 .code-box::-webkit-scrollbar-thumb {
-    background-color: #2b3b5e;
+    background-color: #2f4066;
     border: 2px solid var(--panel-dark);
-    border-radius: 6px;
+    border-radius: 8px;
 }
 
 .code-box::-webkit-scrollbar-thumb:hover {
     background-color: #3b5080;
-}
-
-.sidebar::-webkit-scrollbar {
-    width: 8px;
 }
 
 .sidebar::-webkit-scrollbar-track {
@@ -440,26 +498,31 @@ body {
 }
 
 .sidebar::-webkit-scrollbar-thumb {
-    background-color: #2b3b5e;
-    border-radius: 6px;
+    background-color: #2f4066;
+    border: 2px solid var(--panel);
+    border-radius: 8px;
 }
 
 /* ---------- Medium windows (tablets, half screens) ---------- */
 
 @media (max-width: 992px) {
     .layout {
-        grid-template-columns: 230px minmax(0, 1fr);
-        gap: 14px;
+        grid-template-columns: 236px minmax(0, 1fr);
+        gap: 16px;
         padding: 16px;
     }
 
     .sidebar {
-        padding: 12px;
+        padding: 14px;
+        top: 16px;
+        max-height: calc(100vh - 32px);
     }
 
     .code-box {
+        min-height: 40vh;
         max-height: 65vh;
         font-size: 0.85rem;
+        padding: 16px 18px;
     }
 }
 
@@ -493,6 +556,7 @@ body {
     }
 
     .file-btn {
+        min-height: 38px;
         padding: 8px 10px;
         font-size: 0.9rem;
     }
@@ -502,18 +566,19 @@ body {
     }
 
     .viewer-head {
-        padding: 10px 12px;
-        gap: 8px;
+        padding: 11px 13px;
+        gap: 9px;
     }
 
     .code-box {
+        min-height: 34vh;
         max-height: 60vh;
-        padding: 12px;
+        padding: 14px;
         font-size: 0.85rem;
     }
 
     #previewFrame {
-        height: 320px;
+        height: 340px;
     }
 }
 
@@ -525,15 +590,22 @@ body {
         gap: 8px;
     }
 
+    .sidebar {
+        padding: 12px;
+        border-radius: 12px;
+    }
+
     .sidebar h2 {
         font-size: 0.72rem;
         letter-spacing: 0.12em;
+        padding-bottom: 10px;
+        margin-bottom: 12px;
     }
 
     .search-box {
-        padding: 8px 10px;
+        padding: 9px 11px;
         font-size: 0.9rem;
-        margin-bottom: 10px;
+        margin-bottom: 12px;
     }
 
     .file-btn {
@@ -542,7 +614,8 @@ body {
     }
 
     .viewer-head {
-        padding: 8px 10px;
+        padding: 9px 11px;
+        gap: 8px;
     }
 
     .file-name {
@@ -554,12 +627,18 @@ body {
     .download-btn,
     .preview-btn {
         width: 100%;
+        height: 42px;
         justify-content: center;
     }
 
     .code-box {
+        min-height: 30vh;
         max-height: 55vh;
-        padding: 10px;
+        padding: 12px;
         font-size: 0.78rem;
+    }
+
+    #previewFrame {
+        height: 300px;
     }
 }
