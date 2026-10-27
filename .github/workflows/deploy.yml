@@ -34,7 +34,9 @@ jobs:
           protocol: ftp
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          server-dir: /htdocs/
+          # 2. Upload the files to the InfinityFree web folder for nit.gt.tc
+          # (an empty folder next to the WordPress /htdocs of legendyt4k.ct.ws)
+          server-dir: /nit.gt.tc/htdocs/
           # exclude list must be NEWLINE separated (one glob per line)
           exclude: |
             **/.git*
