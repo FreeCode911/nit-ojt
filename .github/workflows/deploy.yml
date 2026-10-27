@@ -1,0 +1,42 @@
+# ============================================================
+# Deploy the site to InfinityFree every time you push to GitHub
+#
+# Setup (one time):
+#   Settings -> Secrets and variables -> Actions -> New repository secret
+#     FTP_USERNAME = if0_38584182
+#     FTP_PASSWORD = (your FTP password)
+#   Secrets are encrypted and never shown in the code or in logs.
+# ============================================================
+
+name: Deploy to InfinityFree
+
+on:
+  push:
+    branches: ["main"]      # every push to main = deploy
+  workflow_dispatch:        # "Run workflow" button = manual deploy
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      # 1. Get a clean copy of the repository
+      - name: Get the code
+        uses: actions/checkout@v4
+
+      # 2. Upload the files to the InfinityFree web folder (htdocs)
+      - name: Upload site to InfinityFree
+        uses: SamKirkland/FTP-Deploy-Action@v4.4.0
+        with:
+          server: ftpupload.net
+          port: 21
+          protocol: ftp
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          server-dir: /htdocs/
+          # never upload git / actions / editor files
+          exclude: "**/.git/**, **/.github/**, **/.vscode/**"
+          # keep files on the server that are not in the repo
+          dangerous-clean-slate: false
+          timeout: 60
