@@ -25,9 +25,18 @@
                 <span id="fileType" class="type-badge ext-html">html</span>
                 <span id="fileName" class="file-name">index.html</span>
                 <span id="fileInfo" class="file-info"></span>
+                <button id="previewBtn" class="preview-btn" type="button">Preview</button>
+                <button id="downloadBtn" class="download-btn" type="button">Download</button>
                 <button id="copyBtn" class="copy-btn" type="button">Copy</button>
             </div>
-            <pre class="code-box"><code id="code">Loading...</code></pre>
+
+            <!-- Live preview (shown by the Preview button) -->
+            <div id="previewPane" class="preview-pane" hidden>
+                <div class="preview-bar">Live preview &mdash; how this file looks</div>
+                <iframe id="previewFrame" title="Live preview"></iframe>
+            </div>
+
+            <pre id="codeBox" class="code-box"><code id="code">Loading...</code></pre>
         </section>
 
     </main>
