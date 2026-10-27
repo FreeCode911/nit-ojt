@@ -398,15 +398,14 @@ function phpHead() {
         '</style></head><body>';
 }
 
-// Shown for the second or two while we wait for the server
+// Shown for the second or two while we wait for the server -
+// kept plain, so it looks like the page that is about to arrive
 function phpLoading(name) {
-    return phpHead() +
-        '<div class="bar">PHP preview</div>' +
-        '<div class="wrap">' +
-        '<div class="status"><span class="pill wait">RUNNING</span>' +
-        'asking the server to run <span class="url">ME/' + esc(name) + '</span>&hellip;</div>' +
-        '<div class="page"><p>Working&hellip;</p></div>' +
-        '</div></body></html>';
+    return '<!DOCTYPE html><html><head><meta charset="UTF-8">' +
+        '<style>body{background:#fff;color:#6b7280;margin:0;padding:14px;' +
+        'font:14px "Segoe UI",Arial,sans-serif;}</style></head><body>' +
+        'Running <b>' + esc(baseName(name)) + '</b>&hellip;' +
+        '</body></html>';
 }
 
 // Shown when we cannot show a real output (no server, or server has no PHP)
@@ -426,37 +425,20 @@ function phpNote(name, reason) {
         '</div></div></body></html>';
 }
 
-// Shown with the output the server sent back
+// Shown with the output the server sent back - displayed exactly
+// like a real browser shows the page, nothing wrapped around it
 function phpResult(name, out) {
-    // one status row for every result: green tick + which file + how much came back
-    var status = '<div class="status">' +
-        '<span class="pill good">&#10003; EXECUTED ON THE SERVER</span>' +
-        '<span class="url">ME/' + esc(name) + '</span>' +
-        '<span>' + new Blob([out]).size + ' bytes</span></div>';
-
-    // an empty result - say so instead of showing a blank page
-    if (!out || !out.trim()) {
-        return phpHead() +
-            '<div class="bar">Real output &mdash; PHP executed on the server</div>' +
-            '<div class="wrap">' + status +
-            '<div class="page"><h1>' + esc(baseName(name)) + '</h1>' +
-            '<p>The file ran without any error, but it printed nothing.</p></div>' +
-            '</div></body></html>';
-    }
-
     // a complete HTML page - show it exactly as the server sent it
     if (/<\s*(html|!doctype)/i.test(out)) {
         return out;
     }
 
-    // contains tags -> render it; plain text -> keep the line breaks, stay safe
-    var body = /<[a-z][^>]*>/i.test(out) ? out : '<div class="text">' + esc(out) + '</div>';
-
-    return phpHead() +
-        '<div class="bar">Real output &mdash; PHP executed on the server</div>' +
-        '<div class="wrap">' + status +
-        '<div class="page">' + body + '</div>' +
-        '</div></body></html>';
+    // a fragment or plain text - a browser drops it straight into the
+    // page (that is why "Hello, World!" looks like a normal web page)
+    return '<!DOCTYPE html><html><head><meta charset="UTF-8">' +
+        '<title>' + esc(baseName(name)) + '</title></head><body>' +
+        (out || '') +
+        '</body></html>';
 }
 
 // Ask the server for the executed file (only works when the site is hosted)
