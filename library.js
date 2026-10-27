@@ -226,48 +226,73 @@ function buildDoc(name) {
 function phpHead() {
     return '<!DOCTYPE html><html><head><meta charset="UTF-8">' +
         '<style>' +
-        'body{font-family:Segoe UI,Arial,sans-serif;margin:0;color:#1b2333;background:#f4f7fb;}' +
-        '.bar{background:#0d1526;color:#9fd0ff;font-size:11px;font-weight:700;' +
-        'letter-spacing:.16em;text-transform:uppercase;padding:8px 14px;}' +
-        '.pad{padding:20px;}' +
-        'h1{margin:0 0 10px;font-size:20px;}' +
+        // dark chrome, matching the library site
+        'body{margin:0;font-family:Segoe UI,Arial,sans-serif;background:#0b1526;color:#dce8f8;}' +
+        '.bar{background:#08131f;color:#9fd0ff;font-size:11px;font-weight:700;' +
+        'letter-spacing:.16em;text-transform:uppercase;padding:9px 16px;}' +
+        '.wrap{max-width:880px;margin:0 auto;padding:14px 16px 20px;}' +
+        // the row that says what happened
+        '.status{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:12px;color:#8fb3d9;}' +
+        '.pill{padding:4px 11px;border-radius:999px;font-weight:700;font-size:11px;}' +
+        '.good{background:rgba(34,197,94,.16);border:1px solid rgba(34,197,94,.45);color:#4ade80;}' +
+        '.bad{background:rgba(255,159,67,.14);border:1px solid rgba(255,159,67,.45);color:#ffb26b;}' +
+        '.wait{background:rgba(77,171,247,.14);border:1px solid rgba(77,171,247,.45);color:#7dc4ff;}' +
+        '.url{font-family:Consolas,monospace;color:#7ea6d4;}' +
+        // the white area = how the page looks in a real browser
+        '.page{margin-top:12px;background:#fff;color:#141b2b;border-radius:10px;' +
+        'padding:26px 28px;min-height:280px;box-sizing:border-box;overflow:auto;' +
+        'box-shadow:0 14px 34px rgba(0,0,0,.38);font-size:16px;line-height:1.65;}' +
+        '.text{white-space:pre-wrap;word-break:break-word;margin:0;}' +
+        'h1{margin:0 0 8px;font-size:17px;color:#0f172a;}' +
         'p{margin:0 0 12px;line-height:1.6;}' +
-        'pre{background:#0d1526;color:#d8e5f7;padding:14px;border-radius:8px;overflow:auto;}' +
+        'a{color:#2563eb;}' +
         '</style></head><body>';
 }
 
 // Shown for the second or two while we wait for the server
 function phpLoading(name) {
     return phpHead() +
-        '<div class="bar">Running PHP on the server&hellip;</div>' +
-        '<div class="pad"><h1>' + esc(name) + '</h1>' +
-        '<p>Asking the server for the real output&hellip;</p></div>' +
-        '</body></html>';
+        '<div class="bar">PHP preview</div>' +
+        '<div class="wrap">' +
+        '<div class="status"><span class="pill wait">RUNNING</span>' +
+        'asking the server to run <span class="url">ME/' + esc(name) + '</span>&hellip;</div>' +
+        '<div class="page"><p>Working&hellip;</p></div>' +
+        '</div></body></html>';
 }
 
 // Shown when we cannot show a real output (no server, or server has no PHP)
 function phpNote(name, reason) {
     return phpHead() +
-        '<div class="bar">PHP needs a server</div>' +
-        '<div class="pad">' +
-        '<h1>PHP file: ' + esc(name) + '</h1>' +
-        '<p>' + reason + '</p>' +
-        '<p>On the live site <b>http://nit.gt.tc/</b> the server really runs this file, ' +
-        'so press <b>Preview</b> there to see the real output.</p>' +
-        '<p>Here is the code instead:</p>' +
-        '<pre>' + esc(FILES[name]) + '</pre>' +
-        '</div></body></html>';
+        '<div class="bar">PHP preview</div>' +
+        '<div class="wrap">' +
+        '<div class="status"><span class="pill bad">NO SERVER</span>' + reason + '</div>' +
+        '<div class="page">' +
+        '<h1>' + esc(name) + '</h1>' +
+        '<p>Open <b>http://nit.gt.tc/</b> and press <b>Preview</b> there &mdash; ' +
+        'the server really runs this file, so you will see its output.</p>' +
+        '<p>For now, here is the code:</p>' +
+        '<pre style="margin:0;background:#08131f;color:#d8e5f7;padding:16px;' +
+        'border-radius:8px;overflow:auto;font-family:Consolas,monospace;font-size:14px;">' +
+        esc(FILES[name]) + '</pre>' +
+        '</div></div></body></html>';
 }
 
 // Shown with the output the server sent back
 function phpResult(name, out) {
+    // one status row for every result: green tick + which file + how much came back
+    var status = '<div class="status">' +
+        '<span class="pill good">&#10003; EXECUTED ON THE SERVER</span>' +
+        '<span class="url">ME/' + esc(name) + '</span>' +
+        '<span>' + new Blob([out]).size + ' bytes</span></div>';
+
     // an empty result - say so instead of showing a blank page
     if (!out || !out.trim()) {
         return phpHead() +
             '<div class="bar">Real output &mdash; PHP executed on the server</div>' +
-            '<div class="pad"><h1>' + esc(name) + '</h1>' +
-            '<p>The file ran, but it printed nothing.</p></div>' +
-            '</body></html>';
+            '<div class="wrap">' + status +
+            '<div class="page"><h1>' + esc(name) + '</h1>' +
+            '<p>The file ran without any error, but it printed nothing.</p></div>' +
+            '</div></body></html>';
     }
 
     // a complete HTML page - show it exactly as the server sent it
@@ -275,13 +300,14 @@ function phpResult(name, out) {
         return out;
     }
 
-    // contains tags -> render it; plain text -> wrap it so it stays safe
-    var body = /<[a-z][^>]*>/i.test(out) ? out : '<pre>' + esc(out) + '</pre>';
+    // contains tags -> render it; plain text -> keep the line breaks, stay safe
+    var body = /<[a-z][^>]*>/i.test(out) ? out : '<div class="text">' + esc(out) + '</div>';
 
     return phpHead() +
         '<div class="bar">Real output &mdash; PHP executed on the server</div>' +
-        '<div class="pad">' + body + '</div>' +
-        '</body></html>';
+        '<div class="wrap">' + status +
+        '<div class="page">' + body + '</div>' +
+        '</div></body></html>';
 }
 
 // Ask the server for the executed file (only works when the site is hosted)
