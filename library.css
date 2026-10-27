@@ -56,11 +56,101 @@ a:focus-visible {
     outline-offset: 2px;
 }
 
+/* ---------- Background effects: soft cosmic glows ----------
+   One fixed layer behind everything. pointer-events:none so
+   it never blocks a click; .layout has z-index:1 to stay on top */
+
+.bg-fx {
+    position: fixed;                     /* always fills the window */
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;                    /* glows may not cause scrolling */
+    pointer-events: none;
+}
+
+/* a soft coloured ball of light */
+.glow {
+    position: absolute;
+    width: 58vmax;
+    height: 58vmax;
+    border-radius: 50%;
+    opacity: 0.55;
+    will-change: transform;              /* keeps the drift smooth */
+}
+
+.glow-a {                                /* blue, top-left */
+    top: -18vmax;
+    left: -14vmax;
+    background: radial-gradient(circle,
+                rgba(77, 171, 247, 0.30),
+                rgba(77, 171, 247, 0) 62%);
+    animation: drift-a 34s ease-in-out infinite alternate;
+}
+
+.glow-b {                                /* indigo, bottom-right */
+    bottom: -20vmax;
+    right: -16vmax;
+    background: radial-gradient(circle,
+                rgba(124, 108, 247, 0.26),
+                rgba(124, 108, 247, 0) 62%);
+    animation: drift-b 42s ease-in-out infinite alternate;
+}
+
+.glow-c {                                /* pale blue, middle-right */
+    top: 32%;
+    right: 4%;
+    width: 34vmax;
+    height: 34vmax;
+    background: radial-gradient(circle,
+                rgba(56, 189, 248, 0.18),
+                rgba(56, 189, 248, 0) 65%);
+    animation: drift-c 38s ease-in-out infinite alternate;
+}
+
+/* slow movement only - transform is cheap for the graphics card */
+@keyframes drift-a {
+    from { transform: translate3d(0, 0, 0); }
+    to   { transform: translate3d(6vmax, 5vmax, 0); }
+}
+
+@keyframes drift-b {
+    from { transform: translate3d(0, 0, 0); }
+    to   { transform: translate3d(-5vmax, -6vmax, 0); }
+}
+
+@keyframes drift-c {
+    from { transform: translate3d(0, 0, 0) scale(1); }
+    to   { transform: translate3d(-4vmax, 4vmax, 0) scale(1.12); }
+}
+
+/* faint dot grid, fades away towards the edges (mask) */
+.bg-fx::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(rgba(255, 255, 255, 0.06) 1px,
+                                       transparent 1px);
+    background-size: 26px 26px;
+    -webkit-mask-image: radial-gradient(ellipse at 50% 45%,
+                                        #000 35%, transparent 80%);
+    mask-image: radial-gradient(ellipse at 50% 45%,
+                                #000 35%, transparent 80%);
+}
+
+/* anyone who asked Windows for less motion gets a still picture */
+@media (prefers-reduced-motion: reduce) {
+    .glow {
+        animation: none;
+    }
+}
+
 /* ---------- Layout: sidebar + viewer ----------
    minmax(0, 1fr) stops long code lines from
    pushing the page sideways on any window size */
 
 .layout {
+    position: relative;                  /* sits above the background effects */
+    z-index: 1;
     display: grid;
     grid-template-columns: 286px minmax(0, 1fr);
     gap: 22px;
