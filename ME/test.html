@@ -1,0 +1,66 @@
+
+<!DOCTYPE html>
+<html>
+<body>
+
+<h2>Registration Form</h2>
+
+<form id="myForm">
+
+    <input type="text" id="name" placeholder="Enter Name"><br>
+    <p id="nameError" style="display:none;color:red">Enter your name</p>
+
+    <input type="email" id="email" placeholder="Enter Email"><br>   
+    <p id="emailError" style="display:none;color:red">Enter your email</p>
+
+    <input type="password" id="password" placeholder="Enter Password"><br>
+    <p id="passError" style="display:none;color:red">Enter your password</p>
+
+    <input type="password" id="confirm" placeholder="Confirm Password"><br>
+    <p id="confirmError" style="display:none;color:red">Passwords do not match</p>
+
+    <button type="submit">Register</button>
+
+</form>
+
+<script>
+document.getElementById("myForm").onsubmit = function(e) {
+e.preventDefault()
+    let name = document.getElementById("name").value;
+    let email = document.getElementById("email").value;
+    let pass = document.getElementById("password").value;
+    let confirm = document.getElementById("confirm").value;
+
+    if (name == "") {
+        nameError.style.display = "block";
+    } else {
+        nameError.style.display = "none";
+    }
+
+    if (email == "") {
+        emailError.style.display = "block";
+    } else {
+        emailError.style.display = "none";
+    }
+
+    if (pass == "") {
+        passError.style.display = "block";
+    } else {
+        passError.style.display = "none";
+    }
+
+    if (confirm == "" || pass != confirm) {
+        confirmError.style.display = "block";
+    } else {
+        confirmError.style.display = "none";
+    }
+
+    if (name != "" && email != "" &&
+        pass != "" && pass == confirm) {
+        alert("Registration successful!");
+    }
+};
+</script>
+
+</body>
+</html>

@@ -1,0 +1,124 @@
+
+<!DOCTYPE html>
+<html>
+<body>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+    }
+
+form {
+    max-width: 400px;
+    margin: auto;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+</style>
+
+<form id="myForm">
+
+    <input type="text" id="name" placeholder="Enter Name"><br>
+    <p id="nameError" style="display:none;color:red">Enter your name</p>
+
+    <input type="email" id="email" placeholder="Enter Email"><br>
+    <p id="emailError" style="display:none;color:red">Enter your email</p>
+
+    <input type="password" id="password" placeholder="Enter Password"><br>
+    <p id="passError" style="display:none;color:red">Enter your password</p>
+
+    <input type="password" id="confirm" placeholder="Confirm Password"><br>
+    <p id="confirmError" style="display:none;color:red">
+        Passwords do not match
+    </p>
+
+    <button type="submit">Register</button>
+
+</form>
+
+<script>
+function validateName() {
+    let name = document.getElementById("name").value;
+
+    if (name == "") {
+        document.getElementById("nameError").style.display = "block";
+        return false;
+    } else {
+        document.getElementById("nameError").style.display = "none";
+        return true;
+    }
+}
+
+function validateEmail() {
+    let email = document.getElementById("email").value;
+
+    if (email == "") {
+        document.getElementById("emailError").style.display = "block";
+        return false;
+    } else {
+        document.getElementById("emailError").style.display = "none";
+        return true;
+    }
+}
+
+function validatePassword() {
+    let pass = document.getElementById("password").value;
+
+    if (pass == "") {
+        document.getElementById("passError").style.display = "block";
+        return false;
+    } else {
+        document.getElementById("passError").style.display = "none";
+        return true;
+    }
+}
+
+function validateConfirm() {
+    let pass = document.getElementById("password").value;
+    let confirm = document.getElementById("confirm").value;
+
+    if (confirm == "" || pass != confirm) {
+        document.getElementById("confirmError").style.display = "block";
+        return false;
+    } else {
+        document.getElementById("confirmError").style.display = "none";
+        return true;
+    }
+}
+
+document.getElementById("myForm").onsubmit = function() {
+
+    let nameValid = validateName();
+    let emailValid = validateEmail();
+    let passValid = validatePassword();
+    let confirmValid = validateConfirm();
+
+    if (nameValid && emailValid && passValid && confirmValid) {
+        alert("Registration successful!");
+        return true;
+    } else {
+        return false;
+    }
+};
+</script>
+
+</body>
+</html>

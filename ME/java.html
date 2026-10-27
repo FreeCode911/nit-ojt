@@ -7,12 +7,15 @@
 </head>
 <body></body>
     <h1 id="heading">Hello, World!</h1>
-    <button onclick="document.body.style.backgroundColor = 'red'">Change to Red</button>
-    <button onclick="document.body.style.backgroundColor = 'blue'">
+    <button onclick="document.body.style.backgroundColor = 'red'; document.getElementById('heading').style.color = 'lightgreen'">Change to Red</button>
+    <button onclick="document.body.style.backgroundColor = 'blue'; document.getElementById('heading').style.color = 'lightblue'">
         Change to Blue
     </button>
-    <button onclick="document.body.style.backgroundColor = ''">
+    <button onclick="document.body.style.backgroundColor = ''; document.getElementById('heading').style.color = 'black'">
         Change to Reset
     </button>
+    <script>
+
+    </script>
 </body>
 </html>
