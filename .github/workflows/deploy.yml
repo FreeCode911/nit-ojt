@@ -25,7 +25,22 @@ jobs:
       - name: Get the code
         uses: actions/checkout@v4
 
-      # 2. Upload the files to the InfinityFree web folder (htdocs)
+      # 2. Put the commit number after every css/js link (?v=abc1234).
+      #    Browsers cache files for 30 days, so without this they would keep
+      #    showing the OLD site after a deploy. This runs on the copy that is
+      #    uploaded only - your own files on the computer stay untouched.
+      - name: Add version number to links (stops old caching)
+        run: |
+          V=$(git rev-parse --short HEAD)
+          for f in index.html GAME/index.html HUB/index.html; do
+            if [ -f "$f" ]; then
+              sed -i -E 's/(href|src)="([^":]*\.(css|js))"/\1="\2?v='"$V"'"/g' "$f"
+              echo "--- $f"
+              grep -oE '(href|src)="[^"]+\.(css|js)[^"]*"' "$f"
+            fi
+          done
+
+      # 3. Upload the files to the InfinityFree web folder for nit.gt.tc
       - name: Upload site to InfinityFree
         uses: SamKirkland/FTP-Deploy-Action@v4.4.0
         with:
@@ -34,7 +49,6 @@ jobs:
           protocol: ftp
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          # 2. Upload the files to the InfinityFree web folder for nit.gt.tc
           # (an empty folder next to the WordPress /htdocs of legendyt4k.ct.ws)
           server-dir: /nit.gt.tc/htdocs/
           # exclude list must be NEWLINE separated (one glob per line)
