@@ -23,28 +23,6 @@ body {
     font-family: "Segoe UI", Arial, sans-serif;
 }
 
-/* ---------- Header ---------- */
-
-.top {
-    padding: 24px;
-    background-color: var(--panel);
-    border-bottom: 1px solid var(--line);
-}
-
-.top h1 {
-    margin: 0 0 6px;
-    font-size: 1.6rem;
-}
-
-.top p {
-    margin: 0;
-    color: var(--muted);
-}
-
-.top b {
-    color: var(--green);
-}
-
 /* ---------- Layout: sidebar + viewer ---------- */
 
 .layout {
@@ -165,20 +143,6 @@ body {
     line-height: 1.5;
     tab-size: 4;
     white-space: pre;
-}
-
-/* ---------- Footer ---------- */
-
-.foot {
-    padding: 16px 24px;
-    color: var(--muted);
-    font-size: 0.9rem;
-    text-align: center;
-    border-top: 1px solid var(--line);
-}
-
-.foot p {
-    margin: 0;
 }
 
 /* ---------- Small screens ---------- */
