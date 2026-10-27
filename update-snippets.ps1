@@ -6,8 +6,13 @@ $exts = @('.html', '.htm', '.css', '.js', '.php', '.json', '.xml', '.txt', '.md'
 $skip = @('snippets.js')
 
 # every matching file, also the ones inside subfolders (ME\PHP\...)
+# Composer packages (ME\PHP\vendor) are skipped - not part of the library
 $files = Get-ChildItem $src -Recurse -File |
-         Where-Object { $exts -contains $_.Extension -and $skip -notcontains $_.Name }
+         Where-Object {
+             $exts -contains $_.Extension -and
+             $skip -notcontains $_.Name -and
+             $_.FullName -notlike "*\vendor\*"
+         }
 
 # the key is the path relative to ME, using / : "PHP/hello.php"
 $rel = $files | ForEach-Object { $_.FullName.Substring($src.Length + 1).Replace('\', '/') }

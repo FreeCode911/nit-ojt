@@ -1,0 +1,3 @@
+# PHP packages downloaded by Composer stay on your computer only.
+# The library never lists them, and the deploy never uploads them.
+ME/PHP/vendor/
