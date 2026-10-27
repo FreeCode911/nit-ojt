@@ -1,15 +1,18 @@
 /* =========================================
-   library.css - simple code viewer theme
+   library.css - code viewer theme
    ========================================= */
 
 :root {
-    --bg: #0f172a;      /* page background */
-    --panel: #1e293b;   /* boxes */
-    --line: #334155;    /* borders */
-    --text: #e2e8f0;    /* main text */
-    --muted: #94a3b8;   /* small text */
-    --accent: #38bdf8;  /* blue highlight */
-    --green: #22c55e;   /* copy button */
+    --bg: #0b1120;         /* page background */
+    --panel: #131c31;      /* boxes */
+    --panel-dark: #0d1526; /* code area */
+    --line: #24314f;       /* borders */
+    --text: #e6ecf7;       /* main text */
+    --muted: #8ea0c0;      /* small text */
+    --accent: #4dabf7;     /* blue highlight */
+    --green: #22c55e;      /* copy button */
+    --radius: 14px;        /* corner roundness */
+    --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
 }
 
 * {
@@ -20,7 +23,7 @@ body {
     margin: 0;
     background-color: var(--bg);
     color: var(--text);
-    font-family: "Segoe UI", Arial, sans-serif;
+    font-family: "Segoe UI", system-ui, Arial, sans-serif;
 }
 
 /* ---------- Layout: sidebar + viewer ----------
@@ -29,10 +32,10 @@ body {
 
 .layout {
     display: grid;
-    grid-template-columns: 260px minmax(0, 1fr);
-    gap: 16px;
-    padding: 16px 24px;
-    max-width: 1400px;
+    grid-template-columns: 280px minmax(0, 1fr);
+    gap: 20px;
+    padding: 20px;
+    max-width: 1500px;
     margin: 0 auto;
 }
 
@@ -46,21 +49,37 @@ body {
 .sidebar {
     background-color: var(--panel);
     border: 1px solid var(--line);
-    border-radius: 10px;
+    border-radius: var(--radius);
     padding: 16px;
     height: fit-content;
+    position: sticky;                         /* stays put while code scrolls */
+    top: 20px;
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+    box-shadow: var(--shadow);
 }
 
 .sidebar h2 {
-    margin: 0 0 12px;
-    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 14px;
+    font-size: 0.8rem;
+    font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 0.18em;
     color: var(--muted);
 }
 
+/* count as a round pill */
 #fileCount {
+    padding: 2px 9px;
+    background-color: rgba(77, 171, 247, 0.14);
+    border: 1px solid rgba(77, 171, 247, 0.45);
+    border-radius: 999px;
     color: var(--accent);
+    font-size: 0.72rem;
+    letter-spacing: 0.05em;
 }
 
 .sidebar ul {
@@ -69,30 +88,105 @@ body {
     padding: 0;
 }
 
+/* one clickable file row */
 .file-btn {
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
     width: 100%;
     padding: 10px 12px;
-    margin-bottom: 6px;
-    background-color: transparent;
+    margin-bottom: 8px;
+    background-color: rgba(255, 255, 255, 0.02);
     border: 1px solid var(--line);
-    border-radius: 6px;
+    border-radius: 8px;
     color: var(--text);
     font-size: 0.95rem;
     text-align: left;
     cursor: pointer;
+    transition: border-color 0.15s, background-color 0.15s,
+                color 0.15s, box-shadow 0.15s;
 }
 
 .file-btn:hover {
     border-color: var(--accent);
-    color: var(--accent);
+    background-color: rgba(77, 171, 247, 0.10);
 }
 
 .file-btn.active {
     background-color: var(--accent);
     border-color: var(--accent);
-    color: #0f172a;
+    color: #08131f;
     font-weight: 700;
+    box-shadow: 0 6px 16px rgba(77, 171, 247, 0.35);
+}
+
+/* long file names get cut with ... instead of breaking the row */
+.f-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* ---------- Page buttons (files overflow) ---------- */
+
+.page-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--line);
+}
+
+.page-btn {
+    min-width: 34px;
+    padding: 6px 0;
+    background-color: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    color: var(--muted);
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: border-color 0.15s, background-color 0.15s, color 0.15s;
+}
+
+.page-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+.page-btn.current {
+    background-color: var(--accent);
+    border-color: var(--accent);
+    color: #08131f;
+}
+
+/* ---------- Small type badge (HTML / CSS / JS) ---------- */
+
+.type-badge {
+    flex-shrink: 0;
+    padding: 2px 7px;
+    background-color: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    color: var(--muted);
+    font-size: 0.66rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.ext-html { color: #ff8a5c; border-color: rgba(255, 138, 92, 0.5); }
+.ext-css  { color: #7aa2ff; border-color: rgba(122, 162, 255, 0.5); }
+.ext-js   { color: #ffd95c; border-color: rgba(255, 217, 92, 0.5); }
+
+/* badge inside the selected button */
+.file-btn.active .type-badge {
+    background-color: rgba(0, 0, 0, 0.22);
+    border-color: transparent;
+    color: #08131f;
 }
 
 /* ---------- Code viewer ---------- */
@@ -100,8 +194,9 @@ body {
 .viewer {
     background-color: var(--panel);
     border: 1px solid var(--line);
-    border-radius: 10px;
+    border-radius: var(--radius);
     overflow: hidden;
+    box-shadow: var(--shadow);
 }
 
 .viewer-head {
@@ -109,56 +204,112 @@ body {
     flex-wrap: wrap;
     align-items: center;
     gap: 10px;
-    padding: 12px 16px;
+    padding: 14px 16px;
+    background-color: rgba(255, 255, 255, 0.03);
     border-bottom: 1px solid var(--line);
 }
 
 .file-name {
+    font-size: 1.05rem;
     font-weight: 700;
-    color: var(--accent);
+    color: #fff;
+    word-break: break-all;
 }
 
+/* line count as a pill */
 .file-info {
-    color: var(--muted);
-    font-size: 0.85rem;
     margin-right: auto;
+    padding: 3px 10px;
+    background-color: rgba(255, 255, 255, 0.06);
+    border-radius: 999px;
+    color: var(--muted);
+    font-size: 0.78rem;
+    letter-spacing: 0.04em;
 }
+
+/* ---------- Copy button ---------- */
 
 .copy-btn {
-    padding: 8px 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 22px;
     background-color: var(--green);
     border: none;
-    border-radius: 6px;
-    color: #06210f;
+    border-radius: 8px;
+    color: #052b12;
+    font-size: 0.95rem;
     font-weight: 700;
     cursor: pointer;
+    box-shadow: 0 6px 16px rgba(34, 197, 94, 0.28);
+    transition: background-color 0.15s, transform 0.15s, box-shadow 0.15s;
+}
+
+.copy-btn:hover {
+    background-color: #2dd466;
 }
 
 .copy-btn:active {
     transform: translateY(1px);
+    box-shadow: 0 3px 8px rgba(34, 197, 94, 0.25);
 }
+
+/* ---------- Code area ---------- */
 
 .code-box {
     margin: 0;
-    padding: 16px;
+    padding: 18px;
     max-width: 100%;
     max-height: 70vh;
     overflow: auto;
-    background-color: #0b1220;
-    color: #d7e3f4;
+    background-color: var(--panel-dark);
+    color: #d8e5f7;
     font-family: Consolas, "Courier New", monospace;
     font-size: 0.9rem;
-    line-height: 1.5;
+    line-height: 1.6;
     tab-size: 4;
     white-space: pre;
+}
+
+/* slim rounded scrollbars */
+.code-box::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+.code-box::-webkit-scrollbar-track {
+    background-color: var(--panel-dark);
+}
+
+.code-box::-webkit-scrollbar-thumb {
+    background-color: #2b3b5e;
+    border: 2px solid var(--panel-dark);
+    border-radius: 6px;
+}
+
+.code-box::-webkit-scrollbar-thumb:hover {
+    background-color: #3b5080;
+}
+
+.sidebar::-webkit-scrollbar {
+    width: 8px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+    background-color: transparent;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background-color: #2b3b5e;
+    border-radius: 6px;
 }
 
 /* ---------- Medium windows (tablets, half screens) ---------- */
 
 @media (max-width: 992px) {
     .layout {
-        grid-template-columns: 210px minmax(0, 1fr);
-        gap: 12px;
+        grid-template-columns: 230px minmax(0, 1fr);
+        gap: 14px;
         padding: 16px;
     }
 
@@ -179,6 +330,13 @@ body {
         grid-template-columns: minmax(0, 1fr);
         gap: 12px;
         padding: 12px;
+    }
+
+    /* sidebar is no longer sticky here */
+    .sidebar {
+        position: static;
+        max-height: none;
+        overflow: visible;
     }
 
     /* file buttons flow in rows instead of one long column */
@@ -216,7 +374,8 @@ body {
     }
 
     .sidebar h2 {
-        font-size: 0.9rem;
+        font-size: 0.72rem;
+        letter-spacing: 0.12em;
     }
 
     .file-btn {
@@ -228,9 +387,14 @@ body {
         padding: 8px 10px;
     }
 
+    .file-name {
+        font-size: 0.95rem;
+    }
+
     /* copy button takes its own full-width line */
     .copy-btn {
         width: 100%;
+        justify-content: center;
     }
 
     .code-box {

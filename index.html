@@ -15,11 +15,14 @@
         <aside class="sidebar">
             <h2>Files <span id="fileCount"></span></h2>
             <ul id="fileList"></ul>
+            <!-- page buttons, only shown when files overflow -->
+            <div id="pageBar" class="page-bar"></div>
         </aside>
 
         <!-- Code viewer -->
         <section class="viewer">
             <div class="viewer-head">
+                <span id="fileType" class="type-badge ext-html">html</span>
                 <span id="fileName" class="file-name">index.html</span>
                 <span id="fileInfo" class="file-info"></span>
                 <button id="copyBtn" class="copy-btn" type="button">Copy</button>
