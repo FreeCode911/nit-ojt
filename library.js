@@ -210,29 +210,126 @@ function buildDoc(name) {
             '<scr' + 'ipt>' + text + '</scr' + 'ipt></body></html>';
     }
 
-    // PHP: a browser cannot run PHP, so show a short note
+    // PHP: a browser cannot run PHP by itself - openPreview() asks the
+    // server for the real output. This is the fallback when there is no server.
     if (ext === 'php') {
-        return '<!DOCTYPE html><html><head><meta charset="UTF-8"></head>' +
-            '<body style="font-family: Segoe UI, Arial, sans-serif; padding: 24px; color: #1b2333;">' +
-            '<h1 style="margin-top: 0;">PHP file: ' + esc(name) + '</h1>' +
-            '<p>This is a PHP file. It needs a server (for example XAMPP) to run &mdash; ' +
-            'a browser cannot run PHP by itself.</p>' +
-            '<p>Open the <b>Code</b> view to read it, or press <b>Download</b> to save it.</p>' +
-            '<pre style="background:#0d1526;color:#d8e5f7;padding:14px;border-radius:8px;overflow:auto;">' +
-            esc(text) + '</pre>' +
-            '</body></html>';
+        return phpNote(name, 'A browser cannot run PHP by itself &mdash; it needs a server.');
     }
 
     // HTML: the file itself, with its CSS inlined
     return inlineAssets(text);
 }
 
+// ---------- PHP preview: show the REAL output ----------
+
+// Same small head (styles) for the three PHP pages below
+function phpHead() {
+    return '<!DOCTYPE html><html><head><meta charset="UTF-8">' +
+        '<style>' +
+        'body{font-family:Segoe UI,Arial,sans-serif;margin:0;color:#1b2333;background:#f4f7fb;}' +
+        '.bar{background:#0d1526;color:#9fd0ff;font-size:11px;font-weight:700;' +
+        'letter-spacing:.16em;text-transform:uppercase;padding:8px 14px;}' +
+        '.pad{padding:20px;}' +
+        'h1{margin:0 0 10px;font-size:20px;}' +
+        'p{margin:0 0 12px;line-height:1.6;}' +
+        'pre{background:#0d1526;color:#d8e5f7;padding:14px;border-radius:8px;overflow:auto;}' +
+        '</style></head><body>';
+}
+
+// Shown for the second or two while we wait for the server
+function phpLoading(name) {
+    return phpHead() +
+        '<div class="bar">Running PHP on the server&hellip;</div>' +
+        '<div class="pad"><h1>' + esc(name) + '</h1>' +
+        '<p>Asking the server for the real output&hellip;</p></div>' +
+        '</body></html>';
+}
+
+// Shown when we cannot show a real output (no server, or server has no PHP)
+function phpNote(name, reason) {
+    return phpHead() +
+        '<div class="bar">PHP needs a server</div>' +
+        '<div class="pad">' +
+        '<h1>PHP file: ' + esc(name) + '</h1>' +
+        '<p>' + reason + '</p>' +
+        '<p>On the live site <b>http://nit.gt.tc/</b> the server really runs this file, ' +
+        'so press <b>Preview</b> there to see the real output.</p>' +
+        '<p>Here is the code instead:</p>' +
+        '<pre>' + esc(FILES[name]) + '</pre>' +
+        '</div></body></html>';
+}
+
+// Shown with the output the server sent back
+function phpResult(name, out) {
+    // an empty result - say so instead of showing a blank page
+    if (!out || !out.trim()) {
+        return phpHead() +
+            '<div class="bar">Real output &mdash; PHP executed on the server</div>' +
+            '<div class="pad"><h1>' + esc(name) + '</h1>' +
+            '<p>The file ran, but it printed nothing.</p></div>' +
+            '</body></html>';
+    }
+
+    // a complete HTML page - show it exactly as the server sent it
+    if (/<\s*(html|!doctype)/i.test(out)) {
+        return out;
+    }
+
+    // contains tags -> render it; plain text -> wrap it so it stays safe
+    var body = /<[a-z][^>]*>/i.test(out) ? out : '<pre>' + esc(out) + '</pre>';
+
+    return phpHead() +
+        '<div class="bar">Real output &mdash; PHP executed on the server</div>' +
+        '<div class="pad">' + body + '</div>' +
+        '</body></html>';
+}
+
+// Ask the server for the executed file (only works when the site is hosted)
+function runPhp(name) {
+    // 1. opened the file directly -> there is no server at all
+    if (location.protocol !== 'http:' && location.protocol !== 'https:') {
+        return Promise.resolve(phpNote(name,
+            'You are looking at the file directly, so there is no server to run it.'));
+    }
+
+    return fetch('ME/' + encodeURIComponent(name), { cache: 'no-store' })
+        .then(function (res) {
+            if (!res.ok) {
+                throw new Error('HTTP ' + res.status);
+            }
+            return res.text();
+        })
+        .then(function (out) {
+            // 2. the server sent the source back -> it has no PHP installed
+            if (/^\s*<\?php/i.test(out) || /^\s*<\?=/i.test(out)) {
+                return phpNote(name, 'This server does not run PHP, so it only sent the file back unchanged.');
+            }
+            return phpResult(name, out);
+        })
+        .catch(function () {
+            return phpNote(name, 'There is no server here, or the file could not be found.');
+        });
+}
+
 function openPreview(name) {
-    previewFrame.srcdoc = buildDoc(name);
     previewPane.hidden = false;
     codeBox.hidden = true;
     previewBtn.textContent = 'Back to code';
     previewOpen = true;
+
+    // PHP: the server really runs it - wait a moment for the output
+    if (extOf(name) === 'php') {
+        previewFrame.srcdoc = phpLoading(name);
+        runPhp(name).then(function (doc) {
+            // only swap the page if this file is still the one being previewed
+            if (previewOpen && selectedName === name) {
+                previewFrame.srcdoc = doc;
+            }
+        });
+        return;
+    }
+
+    previewFrame.srcdoc = buildDoc(name);
 }
 
 function closePreview() {

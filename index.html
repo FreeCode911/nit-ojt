@@ -3,6 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- ===== Always send visitors to the real site ===== -->
+    <script>
+        (function () {
+            // you are working on the files yourself -> never redirect
+            var developing = location.protocol === 'file:' ||        // double-clicked index.html
+                location.hostname === 'localhost' ||                // local test server
+                location.hostname === '127.0.0.1';
+
+            // anywhere else on the internet -> go to the real site
+            if (!developing && location.hostname !== 'nit.gt.tc') {
+                location.replace('http://nit.gt.tc/');              // replace = no "Back" entry
+            }
+        })();
+    </script>
+
     <link rel="stylesheet" href="library.css">
     <title>LIBIN Code Library</title>
 </head>
