@@ -1,0 +1,15 @@
+# ---------------------------------------------------------------
+# InfinityFree serves pages with "Cache-Control: max-age=2592000"
+# (30 days). That means a visitor's browser would keep the OLD
+# page after you push an update.
+#
+# These rules make browsers re-check the HTML files often, so a
+# deploy shows up almost immediately. The css/js files keep their
+# long cache on purpose - they are versioned (?v=abc1234).
+# ---------------------------------------------------------------
+
+<IfModule mod_headers.c>
+    <FilesMatch "\.(html|htm)$">
+        Header set Cache-Control "no-cache, must-revalidate"
+    </FilesMatch>
+</IfModule>
