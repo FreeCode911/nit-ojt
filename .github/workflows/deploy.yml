@@ -58,6 +58,7 @@ jobs:
             **/.github/**
             **/.vscode/**
             **/node_modules/**
+            **/ME/PHP/vendor/**
           # keep files on the server that are not in the repo
           dangerous-clean-slate: false
           # IMPORTANT: this value is in MILLISECONDS (60000 = 60 seconds)
