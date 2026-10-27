@@ -23,15 +23,22 @@ body {
     font-family: "Segoe UI", Arial, sans-serif;
 }
 
-/* ---------- Layout: sidebar + viewer ---------- */
+/* ---------- Layout: sidebar + viewer ----------
+   minmax(0, 1fr) stops long code lines from
+   pushing the page sideways on any window size */
 
 .layout {
     display: grid;
-    grid-template-columns: 260px 1fr;
+    grid-template-columns: 260px minmax(0, 1fr);
     gap: 16px;
     padding: 16px 24px;
     max-width: 1400px;
     margin: 0 auto;
+}
+
+.sidebar,
+.viewer {
+    min-width: 0;
 }
 
 /* ---------- Sidebar (file list) ---------- */
@@ -134,6 +141,7 @@ body {
 .code-box {
     margin: 0;
     padding: 16px;
+    max-width: 100%;
     max-height: 70vh;
     overflow: auto;
     background-color: #0b1220;
@@ -145,11 +153,89 @@ body {
     white-space: pre;
 }
 
-/* ---------- Small screens ---------- */
+/* ---------- Medium windows (tablets, half screens) ---------- */
+
+@media (max-width: 992px) {
+    .layout {
+        grid-template-columns: 210px minmax(0, 1fr);
+        gap: 12px;
+        padding: 16px;
+    }
+
+    .sidebar {
+        padding: 12px;
+    }
+
+    .code-box {
+        max-height: 65vh;
+        font-size: 0.85rem;
+    }
+}
+
+/* ---------- Phones / narrow windows: stack the two columns ---------- */
 
 @media (max-width: 768px) {
     .layout {
-        grid-template-columns: 1fr;
-        padding: 16px;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 12px;
+        padding: 12px;
+    }
+
+    /* file buttons flow in rows instead of one long column */
+    .sidebar ul {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+
+    .file-btn {
+        width: auto;
+        margin-bottom: 0;
+        padding: 8px 10px;
+        font-size: 0.9rem;
+    }
+
+    .viewer-head {
+        padding: 10px 12px;
+        gap: 8px;
+    }
+
+    .code-box {
+        max-height: 60vh;
+        padding: 12px;
+        font-size: 0.85rem;
+    }
+}
+
+/* ---------- Very small windows ---------- */
+
+@media (max-width: 420px) {
+    .layout {
+        padding: 8px;
+        gap: 8px;
+    }
+
+    .sidebar h2 {
+        font-size: 0.9rem;
+    }
+
+    .file-btn {
+        padding: 7px 9px;
+        font-size: 0.85rem;
+    }
+
+    .viewer-head {
+        padding: 8px 10px;
+    }
+
+    /* copy button takes its own full-width line */
+    .copy-btn {
+        width: 100%;
+    }
+
+    .code-box {
+        max-height: 55vh;
+        padding: 10px;
+        font-size: 0.78rem;
     }
 }

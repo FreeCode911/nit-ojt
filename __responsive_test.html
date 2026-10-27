@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Responsive test</title>
+    <style>
+        body { margin: 0; background: #333; color: #fff; font-family: sans-serif; }
+        .row { padding: 8px; border-bottom: 1px solid #666; }
+        .row b { display: inline-block; width: 70px; }
+        .scroll { overflow-x: auto; }
+        iframe { border: 1px solid #999; background: #fff; display: block; }
+    </style>
+</head>
+<body>
+    <div class="row"><b>360px</b><div class="scroll"><iframe src="index.html" style="width:360px;height:500px"></iframe></div></div>
+    <div class="row"><b>420px</b><div class="scroll"><iframe src="index.html" style="width:420px;height:500px"></iframe></div></div>
+    <div class="row"><b>768px</b><div class="scroll"><iframe src="index.html" style="width:768px;height:520px"></iframe></div></div>
+    <div class="row"><b>992px</b><div class="scroll"><iframe src="index.html" style="width:992px;height:520px"></iframe></div></div>
+    <div class="row"><b>1440px</b><div class="scroll"><iframe src="index.html" style="width:1440px;height:560px"></iframe></div></div>
+    <div class="row"><b>1920px</b><div class="scroll"><iframe src="index.html" style="width:1920px;height:600px"></iframe></div></div>
+</body>
+</html>
