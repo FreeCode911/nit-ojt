@@ -137,10 +137,110 @@ a:focus-visible {
                                 #000 35%, transparent 80%);
 }
 
+/* ---------- Mouse light (soft glow under the pointer) ---------- */
+
+.spotlight {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 520px;
+    height: 520px;
+    margin: -260px 0 0 -260px;            /* centred on the pointer */
+    border-radius: 50%;
+    background: radial-gradient(circle,
+                rgba(77, 171, 247, 0.16),
+                rgba(77, 171, 247, 0) 68%);
+    opacity: 0;
+    pointer-events: none;
+    will-change: transform;
+    transition: opacity 0.5s ease, transform 0.18s ease-out;
+}
+
+.bg-fx.spot-on .spotlight {
+    opacity: 1;
+}
+
+/* ---------- Entrance and feedback animations ---------- */
+
+@keyframes rise {                        /* panels arriving */
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: none; }
+}
+
+@keyframes row-in {                      /* list rows, staggered */
+    from { opacity: 0; transform: translateY(7px); }
+    to   { opacity: 1; transform: none; }
+}
+
+@keyframes drop-in {                     /* preview pane opening */
+    from { opacity: 0; transform: translateY(-10px); }
+    to   { opacity: 1; transform: none; }
+}
+
+@keyframes pop {                         /* numbers and success */
+    0%, 100% { transform: scale(1); }
+     45%     { transform: scale(1.18); }
+}
+
+/* "backwards" fill: after the animation the normal styles take over
+   again, so the hover lifts below keep working */
+.sidebar {
+    animation: rise 0.5s ease backwards;
+}
+
+.viewer {
+    animation: rise 0.5s 0.1s ease backwards;
+}
+
+.file-row {
+    animation: row-in 0.26s ease backwards;
+}
+
+.preview-pane {
+    animation: drop-in 0.3s ease;
+}
+
+/* quick pulse when the count or a tab changes, and after a copy */
+#fileCount.pop,
+.copy-btn.ok {
+    animation: pop 0.35s ease;
+}
+
+.tab-btn.active {
+    animation: pop 0.25s ease;
+}
+
+/* phones and tablets have no pointer to follow */
+@media (hover: none) {
+    .spotlight {
+        display: none;
+    }
+}
+
 /* anyone who asked Windows for less motion gets a still picture */
 @media (prefers-reduced-motion: reduce) {
-    .glow {
+    .glow,
+    .sidebar,
+    .viewer,
+    .file-row,
+    .preview-pane,
+    #fileCount.pop,
+    .copy-btn.ok,
+    .tab-btn.active {
         animation: none;
+    }
+
+    .spotlight {
+        display: none;
+    }
+
+    .file-row:hover,
+    .page-btn:hover,
+    .tab-btn:hover,
+    .preview-btn:hover,
+    .download-btn:hover,
+    .copy-btn:hover {
+        transform: none;
     }
 }
 
@@ -241,7 +341,12 @@ a:focus-visible {
     letter-spacing: 0.1em;
     text-transform: uppercase;
     cursor: pointer;
-    transition: border-color 0.15s, background-color 0.15s, color 0.15s;
+    transition: border-color 0.15s, background-color 0.15s,
+                color 0.15s, transform 0.15s;
+}
+
+.tab-btn:hover {
+    transform: translateY(-1px);
 }
 
 .tab-btn:hover {
@@ -306,6 +411,12 @@ a:focus-visible {
     align-items: stretch;
     gap: 6px;
     margin-bottom: 7px;
+    transition: transform 0.15s ease;
+}
+
+/* the whole row lifts a little when you point at it */
+.file-row:hover {
+    transform: translateY(-2px);
 }
 
 .file-btn {
@@ -375,7 +486,12 @@ a:focus-visible {
     font-weight: 700;
     font-variant-numeric: tabular-nums;
     cursor: pointer;
-    transition: border-color 0.15s, background-color 0.15s, color 0.15s;
+    transition: border-color 0.15s, background-color 0.15s,
+                color 0.15s, transform 0.15s;
+}
+
+.page-btn:hover {
+    transform: translateY(-1px);
 }
 
 .page-btn:hover {
@@ -443,6 +559,7 @@ a:focus-visible {
 }
 
 .viewer-head {
+    position: relative;                  /* for the accent hairline below */
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -450,6 +567,20 @@ a:focus-visible {
     padding: 15px 18px;
     background-color: rgba(255, 255, 255, 0.035);
     border-bottom: 1px solid var(--line);
+}
+
+/* thin accent line fading out to the right */
+.viewer-head::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background: linear-gradient(90deg,
+                rgba(77, 171, 247, 0.55),
+                rgba(77, 171, 247, 0) 55%);
+    pointer-events: none;
 }
 
 /* the open file name, set in the code font */
@@ -499,6 +630,13 @@ a:focus-visible {
 .download-btn:active,
 .copy-btn:active {
     transform: translateY(1px);
+}
+
+/* toolbar buttons float up on hover */
+.preview-btn:hover,
+.download-btn:hover,
+.copy-btn:hover {
+    transform: translateY(-1px);
 }
 
 /* ghost button */

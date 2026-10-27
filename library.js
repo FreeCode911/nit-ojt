@@ -58,7 +58,18 @@ var countEl = document.getElementById('fileCount');
 var searchBox = document.getElementById('searchBox');
 var query = '';                     // what the user has typed, lower case
 
-countEl.textContent = '(' + tabNames().length + ')';
+// write the count and give it a quick pulse when it changes
+function setCount(text) {
+    if (countEl.textContent === text) {
+        return;
+    }
+    countEl.textContent = text;
+    countEl.classList.remove('pop');
+    void countEl.offsetWidth;           // restart the animation
+    countEl.classList.add('pop');
+}
+
+setCount('(' + tabNames().length + ')');
 
 // file names of the open tab that match what was typed (empty search = all)
 function searchResults() {
@@ -93,9 +104,9 @@ function renderList() {
     var matches = searchResults();
 
     // (13) normally, (3/13) while searching - counts are per tab
-    countEl.textContent = query
+    setCount(query
         ? '(' + matches.length + '/' + files.length + ')'
-        : '(' + files.length + ')';
+        : '(' + files.length + ')');
 
     // nothing to show - a message instead of an empty box
     if (matches.length === 0) {
@@ -114,9 +125,10 @@ function renderList() {
         ? matches
         : matches.slice((currentPage - 1) * PER_PAGE, (currentPage - 1) * PER_PAGE + PER_PAGE);
 
-    pageNames.forEach(function (name) {
+    pageNames.forEach(function (name, i) {
         var li = document.createElement('li');
         li.className = 'file-row';
+        li.style.animationDelay = (i * 45) + 'ms';   // rows arrive one by one
 
         var btn = document.createElement('button');
         btn.type = 'button';
@@ -525,8 +537,10 @@ copyBtn.addEventListener('click', function () {
 
     copyText(text).then(function () {
         copyBtn.textContent = 'Copied!';
+        copyBtn.classList.add('ok');                 // little pulse
         setTimeout(function () {
             copyBtn.textContent = 'Copy';
+            copyBtn.classList.remove('ok');
         }, 1600);
     }).catch(function () {
         copyBtn.textContent = 'Press Ctrl+C';
@@ -578,3 +592,104 @@ function selectCode() {
 renderTabs();
 showFile(selectedName);
 renderList();
+
+// 8. Keyboard: arrow keys walk through the files of the open tab
+function moveSelection(delta) {
+    var all = searchResults();
+    if (!all.length) {
+        return;
+    }
+
+    var i = all.indexOf(selectedName);
+    if (i === -1) {
+        i = delta > 0 ? -1 : 0;
+    }
+
+    var next = Math.max(0, Math.min(all.length - 1, i + delta));
+    if (next === i) {
+        return;
+    }
+
+    var target = all[next];
+    var keepPreview = previewOpen;        // stay in preview mode if it is open
+
+    selectedName = target;
+    if (!query) {
+        currentPage = Math.floor(next / PER_PAGE) + 1;   // the page follows
+    }
+
+    showFile(target);
+    if (keepPreview) {
+        openPreview(target);
+    }
+    renderList();
+
+    // keep the highlighted row inside the list box
+    var act = list.querySelector('.file-btn.active');
+    if (act && act.scrollIntoView) {
+        act.scrollIntoView({ block: 'nearest' });
+    }
+}
+
+document.addEventListener('keydown', function (e) {
+    // Ctrl+K (or Cmd+K) jumps to the search box from anywhere
+    if ((e.ctrlKey || e.metaKey) && (e.key === 'k' || e.key === 'K')) {
+        e.preventDefault();
+        searchBox.focus();
+        searchBox.select();
+        return;
+    }
+
+    // typing in the search box: it keeps its own keys (Enter / Escape)
+    if (document.activeElement === searchBox) {
+        return;
+    }
+
+    // "/" also focuses the search box
+    if (e.key === '/') {
+        e.preventDefault();
+        searchBox.focus();
+        return;
+    }
+
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        moveSelection(e.key === 'ArrowDown' ? 1 : -1);
+        return;
+    }
+
+    // Enter opens the preview - but a focused button keeps its own Enter
+    var el = document.activeElement;
+    var onControl = el && (el.tagName === 'BUTTON' || el.tagName === 'INPUT' ||
+                           el.tagName === 'TEXTAREA' || el.tagName === 'A');
+    if (e.key === 'Enter' && !onControl) {
+        e.preventDefault();
+        previewBtn.click();
+    }
+});
+
+// 9. A soft light that follows the mouse (desktop only)
+var spot = document.querySelector('.spotlight');
+var spotFx = document.querySelector('.bg-fx');
+var spotWanted = spot && spotFx && window.matchMedia &&
+    matchMedia('(hover: hover)').matches &&
+    !matchMedia('(prefers-reduced-motion: reduce)').matches;
+var spotFrame = 0;
+var spotX = 0;
+var spotY = 0;
+
+if (spotWanted) {
+    window.addEventListener('pointermove', function (e) {
+        spotX = e.clientX;
+        spotY = e.clientY;
+        spotFx.classList.add('spot-on');            // fade the light in once
+
+        if (spotFrame) {
+            return;                                 // already waiting for a frame
+        }
+        spotFrame = requestAnimationFrame(function () {
+            spotFrame = 0;
+            spot.style.transform = 'translate3d(' + spotX + 'px,' + spotY + 'px,0)';
+        });
+    }, { passive: true });
+}
