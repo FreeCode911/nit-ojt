@@ -12,32 +12,52 @@ names.sort(function (a, b) {
 });
 
 // 1b. Tabs: the ME folder is the first tab, every folder
-//     inside ME gets its own tab (e.g. "PHP")
-var tabs = ['ME'];
-names.forEach(function (name) {
-    var slash = name.indexOf('/');
-    if (slash > 0) {
-        var folder = name.slice(0, slash);
-        if (tabs.indexOf(folder) === -1) {
-            tabs.push(folder);
+//     inside ME gets its own tab (e.g. "PHP").
+//     Some folders live deeper but still deserve their own tab
+//     (e.g. the Laravel app under PHP/APP) - list them here:
+//     folder path inside ME -> tab name shown on the button.
+var SUB_TABS = {
+    'PHP/APP': 'LARAVEL'     // the Laravel app
+};
+
+// which tab a file belongs to (the nested folders win)
+function tabOf(name) {
+    for (var path in SUB_TABS) {
+        if (name.indexOf(path + '/') === 0) {
+            return path;                 // inside a nested tab
         }
     }
+    var slash = name.indexOf('/');
+    return slash === -1 ? 'ME' : name.slice(0, slash);
+}
+
+// tabs sorted shallow first: ME (HTML), then PHP, then PHP/APP (LARAVEL)
+var tabs = [];
+names.forEach(function (name) {
+    var tab = tabOf(name);
+    if (tabs.indexOf(tab) === -1) {
+        tabs.push(tab);
+    }
+});
+tabs.sort(function (a, b) {
+    var da = a === 'ME' ? 0 : a.split('/').length;
+    var db = b === 'ME' ? 0 : b.split('/').length;
+    if (da !== db) return da - db;
+    return a.localeCompare(b);
 });
 var currentTab = 'ME';              // the tab we are looking at
 
 // the files that belong to the open tab
 function tabNames() {
     return names.filter(function (name) {
-        if (currentTab === 'ME') {
-            return name.indexOf('/') === -1;             // top level = ME
-        }
-        return name.indexOf(currentTab + '/') === 0;     // inside that folder
+        return tabOf(name) === currentTab;
     });
 }
 
-// what a tab is called: the ME folder itself is shown as "HTML"
+// what a tab is called: ME shows as "HTML", "PHP/APP" as "LARAVEL"
 function tabLabel(tab) {
-    return tab === 'ME' ? 'HTML' : tab;
+    if (tab === 'ME') return 'HTML';
+    return SUB_TABS[tab] || tab;
 }
 
 // "PHP/hello.php" -> "hello.php" (the folder is already the tab name)
@@ -489,8 +509,10 @@ function openPreview(name) {
     previewBtn.textContent = 'Back to code';
     previewOpen = true;
 
-    // PHP: the server really runs it - wait a moment for the output
-    if (extOf(name) === 'php') {
+    // PHP: the server really runs it - wait a moment for the output.
+    // The Laravel app files are not standalone snippets, so we just
+    // show their source instead of trying to execute them.
+    if (extOf(name) === 'php' && name.indexOf('PHP/APP/') !== 0) {
         previewFrame.srcdoc = phpLoading(name);
         runPhp(name).then(function (doc) {
             // only swap the page if this file is still the one being previewed

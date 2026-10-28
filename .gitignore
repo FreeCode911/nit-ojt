@@ -1,3 +1,8 @@
-# PHP packages downloaded by Composer stay on your computer only.
-# The library never lists them, and the deploy never uploads them.
-ME/PHP/vendor/
+# Composer and npm packages are never part of the library
+vendor/
+node_modules/
+
+# secrets and local data
+.env
+*.sqlite
+*.log

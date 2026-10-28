@@ -2,16 +2,39 @@
 # Run this after you add / rename / change files in ME.
 $src  = "$PSScriptRoot\ME"
 $out  = "$PSScriptRoot\snippets.js"
-$exts = @('.html', '.htm', '.css', '.js', '.php', '.json', '.xml', '.txt', '.md')
+$exts = @('.html', '.htm', '.css', '.js', '.php', '.json', '.xml', '.txt', '.md',
+          '.example', '.lock', '.htaccess', '.gitignore', '.gitattributes', '')
 $skip = @('snippets.js')
 
 # every matching file, also the ones inside subfolders (ME\PHP\...)
-# Composer packages (ME\PHP\vendor) are skipped - not part of the library
+# Composer packages and node_modules are never part of the library
+$ignoreDirs = @('\vendor\', '\node_modules\')
+
+# For the Laravel app (ME\PHP\APP) we keep only the files you would
+# upload to a host: source, config, routes, views, migrations, the
+# public assets, artisan and the composer files. No tests, agents,
+# caches, runtime files, secrets or lockfiles.
+function Test-HostFile($rel) {
+    if ($rel -notlike 'PHP\APP\*') { return $true }
+    $drop = @('\tests\', '\.agents\', '\storage\framework\views\',
+              '\storage\framework\cache\', '\storage\framework\sessions\',
+              '\storage\logs\', '\bootstrap\cache\', '.sqlite', '.log',
+              'package-lock.json', 'phpunit.xml', 'AGENTS.md', 'boost.json',
+              'opencode.json', 'README.md', '.editorconfig', '.gitattributes')
+    foreach ($d in $drop) { if ($rel -like "*$d*") { return $false } }
+    if ((Split-Path $rel -Leaf) -eq '.env') { return $false }
+    return $true
+}
+
 $files = Get-ChildItem $src -Recurse -File |
          Where-Object {
+             $fn = $_.FullName
+             $bad = $false
+             foreach ($d in $ignoreDirs) { if ($fn -like "*$d*") { $bad = $true; break } }
+             if ($bad) { return $false }
              $exts -contains $_.Extension -and
              $skip -notcontains $_.Name -and
-             $_.FullName -notlike "*\vendor\*"
+             (Test-HostFile ($fn.Substring($src.Length + 1)))
          }
 
 # the key is the path relative to ME, using / : "PHP/hello.php"
