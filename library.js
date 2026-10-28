@@ -366,6 +366,110 @@ function inlineAssets(html) {
     return html;
 }
 
+// Turn Markdown into HTML for the preview pane (small, safe renderer)
+function mdToHtml(md) {
+    // 1. escape HTML so nothing in the file can run as code
+    var s = md.replace(/&/g, '&amp;')
+              .replace(/</g, '&lt;')
+              .replace(/>/g, '&gt;');
+
+    // 2. pull out fenced code blocks (``` ... ```) first
+    var codeBlocks = [];
+    s = s.replace(/```([\w-]*)\n([\s\S]*?)```/g, function (_, lang, code) {
+        codeBlocks.push('<pre class="md-code"><code>' + code.replace(/\n$/, '') + '</code></pre>');
+        return '\u0000CB' + (codeBlocks.length - 1) + '\u0000';
+    });
+
+    // 3. walk the text line by line and build the block structure
+    var lines = s.split('\n');
+    var out = [];
+    var i = 0;
+    while (i < lines.length) {
+        var line = lines[i];
+
+        // blank line
+        if (/^\s*$/.test(line)) { i++; continue; }
+
+        // heading
+        var hm = line.match(/^(#{1,6})\s+(.*)$/);
+        if (hm) {
+            var lvl = hm[1].length;
+            out.push('<h' + lvl + '>' + inlineMd(hm[2]) + '</h' + lvl + '>');
+            i++; continue;
+        }
+
+        // horizontal rule
+        if (/^(---|\*\*\*|___)\s*$/.test(line.trim())) {
+            out.push('<hr>'); i++; continue;
+        }
+
+        // blockquote
+        if (/^&gt;\s?/.test(line)) {
+            var q = [];
+            while (i < lines.length && /^&gt;\s?/.test(lines[i])) {
+                q.push(lines[i].replace(/^&gt;\s?/, ''));
+                i++;
+            }
+            out.push('<blockquote>' + mdToHtml(q.join('\n')) + '</blockquote>');
+            continue;
+        }
+
+        // fenced code placeholder
+        var cbm = line.match(/^\u0000CB(\d+)\u0000$/);
+        if (cbm) {
+            out.push(codeBlocks[+cbm[1]]);
+            i++; continue;
+        }
+
+        // unordered list
+        if (/^[-*+]\s+/.test(line)) {
+            var items = [];
+            while (i < lines.length && /^[-*+]\s+/.test(lines[i])) {
+                items.push('<li>' + inlineMd(lines[i].replace(/^[-*+]\s+/, '')) + '</li>');
+                i++;
+            }
+            out.push('<ul>' + items.join('') + '</ul>');
+            continue;
+        }
+
+        // ordered list
+        if (/^\d+\.\s+/.test(line)) {
+            var items = [];
+            while (i < lines.length && /^\d+\.\s+/.test(lines[i])) {
+                items.push('<li>' + inlineMd(lines[i].replace(/^\d+\.\s+/, '')) + '</li>');
+                i++;
+            }
+            out.push('<ol>' + items.join('') + '</ol>');
+            continue;
+        }
+
+        // paragraph: collect lines until a blank line or another block
+        var para = [];
+        while (i < lines.length && !/^\s*$/.test(lines[i]) &&
+               !/^(#{1,6}\s|---|\*\*\*|___|&gt;|\u0000CB\d+\u0000|[-*+]\s+|\d+\.\s+)/.test(lines[i])) {
+            para.push(lines[i]);
+            i++;
+        }
+        out.push('<p>' + inlineMd(para.join(' ')) + '</p>');
+    }
+
+    return out.join('\n');
+}
+
+// inline Markdown: code, images, links, bold, italic
+function inlineMd(text) {
+    text = text.replace(/`([^`]+)`/g, '<code>$1</code>');
+    text = text.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1">');
+    text = text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
+    text = text.replace(/\*\*\*(.+?)\*\*\*/g, '<strong><em>$1</em></strong>');
+    text = text.replace(/___(.+?)___/g, '<strong><em>$1</em></strong>');
+    text = text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    text = text.replace(/__(.+?)__/g, '<strong>$1</strong>');
+    text = text.replace(/\*(.+?)\*/g, '<em>$1</em>');
+    text = text.replace(/_(.+?)_/g, '<em>$1</em>');
+    return text;
+}
+
 // Build the page that the preview shows
 function buildDoc(name) {
     var text = FILES[name];
@@ -395,6 +499,27 @@ function buildDoc(name) {
     // server for the real output. This is the fallback when there is no server.
     if (ext === 'php') {
         return phpNote(name, 'A browser cannot run PHP by itself &mdash; it needs a server.');
+    }
+
+    // Markdown: render it like a real preview (headings, lists, code, links...)
+    if (ext === 'md') {
+        return '<!DOCTYPE html><html><head><meta charset="UTF-8">' +
+            '<title>' + esc(baseName(name)) + '</title>' +
+            '<style>' +
+            'body{font-family:"Segoe UI",system-ui,Arial,sans-serif;line-height:1.7;' +
+            'color:#1f2937;margin:0;padding:24px 28px;max-width:760px}' +
+            'h1,h2,h3,h4,h5,h6{color:#111827;margin:1.4em 0 .5em;line-height:1.25}' +
+            'h1{font-size:1.9rem;border-bottom:1px solid #e5e7eb;padding-bottom:.3em}' +
+            'h2{font-size:1.5rem;border-bottom:1px solid #e5e7eb;padding-bottom:.25em}' +
+            'h3{font-size:1.25rem} p{margin:.8em 0} ul,ol{margin:.8em 0;padding-left:1.6em}' +
+            'li{margin:.3em 0} blockquote{border-left:4px solid #9ca3af;margin:1em 0;' +
+            'padding:.4em 1em;color:#4b5563;background:#f3f4f6;border-radius:0 6px 6px 0}' +
+            'code{background:#f3f4f6;padding:2px 6px;border-radius:4px;font-family:Consolas,monospace;font-size:.9em}' +
+            'pre.md-code{background:#1f2937;color:#e5e7eb;padding:14px 16px;border-radius:8px;overflow:auto}' +
+            'pre.md-code code{background:none;padding:0;color:inherit}' +
+            'a{color:#2563eb} hr{border:none;border-top:1px solid #e5e7eb;margin:1.5em 0}' +
+            'img{max-width:100%}' +
+            '</style></head><body>' + mdToHtml(text) + '</body></html>';
     }
 
     // HTML: the file itself, with its CSS inlined
