@@ -366,6 +366,11 @@ a:focus-visible {
 .tab-btn {
     flex: 1;
     min-width: 0;
+    display: inline-flex;              /* keep the text centred */
+    align-items: center;
+    justify-content: center;
+    min-height: 28px;                  /* every tab the same height */
+    white-space: nowrap;               /* never wrap a tab label */
     padding: 7px 12px;
     background-color: transparent;
     border: 0;
@@ -373,7 +378,7 @@ a:focus-visible {
     color: var(--muted);
     font-size: 0.75rem;
     font-weight: 700;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.06em;            /* keep long names (LARAVEL) on one line */
     text-transform: uppercase;
     cursor: pointer;
     transition: background-color 0.2s, color 0.2s,
@@ -390,7 +395,7 @@ a:focus-visible {
     background-color: var(--accent);
     background-image: var(--glass-hi);
     color: var(--accent-ink);
-    box-shadow: 0 3px 10px rgba(77, 171, 247, 0.35),
+    box-shadow: 0 1px 4px rgba(77, 171, 247, 0.30),
                 inset 0 1px 0 rgba(255, 255, 255, 0.45);
 }
 
