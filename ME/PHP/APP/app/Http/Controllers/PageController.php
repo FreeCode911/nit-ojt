@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Certificate;
 use App\Models\Internship;
 use App\Models\LogEntry;
 use App\Models\User;
@@ -233,6 +234,7 @@ class PageController extends Controller
             ['label' => 'Internships Tracked', 'value' => (string) $stats['internships'], 'change' => '+12%', 'changeType' => 'increase'],
             ['label' => 'Log Entries', 'value' => (string) $stats['logs'], 'change' => '+8%', 'changeType' => 'increase'],
             ['label' => 'Active Users', 'value' => (string) $stats['users'], 'change' => '+23%', 'changeType' => 'increase'],
+            ['label' => 'Certificates Issued', 'value' => (string) Certificate::count(), 'change' => '+15%', 'changeType' => 'increase'],
         ];
 
         $dashboardChartData = [

@@ -344,10 +344,10 @@ export default function Landing({
                                 ),
                             )}
                         </div>
+                    </div>
 
-                        <div className='mt-16 animate-fade-in-up' style={{ animationDelay: '500ms' }}>
-                            <AnimatedStats stats={animatedStats} className='w-full' />
-                        </div>
+                    <div className='mt-16 animate-fade-in-up' style={{ animationDelay: '500ms' }}>
+                        <AnimatedStats stats={animatedStats} className='w-full' />
                     </div>
                 </div>
             </section>
