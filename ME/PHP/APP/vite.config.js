@@ -18,9 +18,19 @@ export default defineConfig({
             '@': path.resolve(__dirname, './resources/js'),  
         },  
     },  
+    build: {  
+        rollupOptions: {  
+            output: {  
+                manualChunks: {  
+                    charts: ['recharts'],  
+                    motion: ['framer-motion'],  
+                },  
+            },  
+        },  
+    },  
     server: {  
         watch: {  
             ignored: ['**/storage/framework/views/**'],  
         },  
     },  
-}); 
+});  
