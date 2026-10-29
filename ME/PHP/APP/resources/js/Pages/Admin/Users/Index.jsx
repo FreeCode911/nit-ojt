@@ -1,6 +1,9 @@
 import { Link } from '@inertiajs/react';
 import { Plus } from 'lucide-react';
 import AppLayout from '@/Layouts/AppLayout';
+import GradientAccent from '@/components/AppBits/GradientAccent';
+import SpotlightSurface from '@/components/AppBits/SpotlightSurface';
+import Magnet from '@/components/reactbits/Magnet/Magnet';
 
 const ROLE_BADGES = {
     admin: 'bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-300',
@@ -60,18 +63,22 @@ export default function Index({ users }) {
         <AppLayout title='Users'>
             <div className='flex flex-wrap justify-between items-center gap-4 mb-6'>
                 <div>
-                    <h1 className='text-3xl font-bold tracking-tight'>Users</h1>
+                    <h1 className='text-3xl font-bold tracking-tight'>
+                        <GradientAccent>Users</GradientAccent>
+                    </h1>
                     <p className='text-slate-500 dark:text-slate-400 mt-1'>
                         Manage accounts and roles
                     </p>
                 </div>
-                <Link href={route('admin.users.create')} className='btn-primary'>
-                    <Plus className='w-4 h-4' />
-                    New User
-                </Link>
+                <Magnet padding={48} magnetStrength={1.8} tilt={0} scale={1.05} wrapperClassName='shrink-0'>
+                    <Link href={route('admin.users.create')} className='btn-primary'>
+                        <Plus className='w-4 h-4' />
+                        New User
+                    </Link>
+                </Magnet>
             </div>
 
-            <div className='card overflow-hidden'>
+            <SpotlightSurface className='p-0! overflow-hidden'>
                 <div className='overflow-x-auto'>
                     <table className='table-base'>
                         <thead className='bg-slate-50 dark:bg-slate-800/40'>
@@ -131,7 +138,7 @@ export default function Index({ users }) {
                         </tbody>
                     </table>
                 </div>
-            </div>
+            </SpotlightSurface>
 
             <Pagination paginator={users} />
         </AppLayout>

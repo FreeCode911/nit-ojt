@@ -2,6 +2,9 @@ import { usePage } from '@inertiajs/react';
 import { useForm } from '@inertiajs/react';
 import { Award, BookOpen, Check, CheckCircle, Star, Target } from 'lucide-react';
 import AppLayout from '@/Layouts/AppLayout';
+import GradientAccent from '@/components/AppBits/GradientAccent';
+import SpotlightSurface from '@/components/AppBits/SpotlightSurface';
+import CountUp from '@/components/reactbits/CountUp/CountUp';
 
 export default function InternReport({ internship, approvedHours, totalLogs, approvedLogs }) {
     const { props } = usePage();
@@ -22,8 +25,10 @@ export default function InternReport({ internship, approvedHours, totalLogs, app
     return (
         <AppLayout title='Intern Report'>
             <div className='max-w-4xl mx-auto'>
-                <div className='card p-8 mb-6'>
-                    <h1 className='text-2xl font-bold mb-1'>OJT Report — {internship.intern_name}</h1>
+                <SpotlightSurface className='mb-6'>
+                    <h1 className='text-2xl font-bold mb-1'>
+                        <GradientAccent>OJT Report — {internship.intern_name}</GradientAccent>
+                    </h1>
                     <p className='text-slate-500 dark:text-slate-400 text-sm'>
                         {internship.company} · {internship.position} · Supervisor: {internship.supervisor_name}
                     </p>
@@ -31,22 +36,30 @@ export default function InternReport({ internship, approvedHours, totalLogs, app
                     <div className='grid md:grid-cols-4 gap-4 mt-6'>
                         <div className='rounded-xl bg-slate-50 dark:bg-slate-800/60 p-4 text-center'>
                             <Target className='w-5 h-5 mx-auto text-brand-600 dark:text-brand-400 mb-1' />
-                            <div className='text-2xl font-bold'>{internship.required_hours}</div>
+                            <div className='text-2xl font-bold'>
+                                <CountUp to={internship.required_hours} duration={1.6} separator=',' easing='easeOut' trigger='view' replayOnHover />
+                            </div>
                             <div className='text-xs text-slate-500 dark:text-slate-400'>Required Hours</div>
                         </div>
                         <div className='rounded-xl bg-slate-50 dark:bg-slate-800/60 p-4 text-center'>
                             <CheckCircle className='w-5 h-5 mx-auto text-brand-600 dark:text-brand-400 mb-1' />
-                            <div className='text-2xl font-bold'>{approvedHours}</div>
+                            <div className='text-2xl font-bold'>
+                                <CountUp to={approvedHours} duration={1.6} separator=',' easing='easeOut' trigger='view' replayOnHover />
+                            </div>
                             <div className='text-xs text-slate-500 dark:text-slate-400'>Approved Hours</div>
                         </div>
                         <div className='rounded-xl bg-slate-50 dark:bg-slate-800/60 p-4 text-center'>
                             <BookOpen className='w-5 h-5 mx-auto text-brand-600 dark:text-brand-400 mb-1' />
-                            <div className='text-2xl font-bold'>{totalLogs}</div>
+                            <div className='text-2xl font-bold'>
+                                <CountUp to={totalLogs} duration={1.6} separator=',' easing='easeOut' trigger='view' replayOnHover />
+                            </div>
                             <div className='text-xs text-slate-500 dark:text-slate-400'>Total Logs</div>
                         </div>
                         <div className='rounded-xl bg-slate-50 dark:bg-slate-800/60 p-4 text-center'>
                             <Check className='w-5 h-5 mx-auto text-brand-600 dark:text-brand-400 mb-1' />
-                            <div className='text-2xl font-bold'>{approvedLogs}</div>
+                            <div className='text-2xl font-bold'>
+                                <CountUp to={approvedLogs} duration={1.6} separator=',' easing='easeOut' trigger='view' replayOnHover />
+                            </div>
                             <div className='text-xs text-slate-500 dark:text-slate-400'>Approved Logs</div>
                         </div>
                     </div>
@@ -62,7 +75,7 @@ export default function InternReport({ internship, approvedHours, totalLogs, app
                             {internship.progress_percent}% complete
                         </p>
                     </div>
-                </div>
+                </SpotlightSurface>
 
                 {/* Log entries */}
                 <div className='card p-6 mb-6'>

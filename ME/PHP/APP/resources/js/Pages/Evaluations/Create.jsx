@@ -1,4 +1,6 @@
 import AppLayout from '@/Layouts/AppLayout';
+import GradientAccent from '@/components/AppBits/GradientAccent'; 
+import SpotlightSurface from '@/components/AppBits/SpotlightSurface';
 import { Link, useForm } from '@inertiajs/react';
 
 const CRITERIA = ['attendance', 'performance', 'initiative', 'teamwork', 'communication'];
@@ -27,12 +29,12 @@ export default function EvaluationsCreate({ internships }) {
         <AppLayout title='New Evaluation'>
             <div className='max-w-3xl mx-auto'>
                 <div className='mb-6'>
-                    <h1 className='text-3xl font-bold tracking-tight'>New Evaluation</h1>
+                    <h1 className='text-3xl font-bold tracking-tight'><GradientAccent>New Evaluation</GradientAccent></h1>
                     <p className='text-slate-500 dark:text-slate-400 mt-1'>
                         Score an intern's performance
                     </p>
                 </div>
-                <div className='card p-8'>
+                <SpotlightSurface>
                     <form onSubmit={submit} className='space-y-5'>
                         <div>
                             <label className='label'>Internship</label>
@@ -173,7 +175,7 @@ export default function EvaluationsCreate({ internships }) {
                             </Link>
                         </div>
                     </form>
-                </div>
+                </SpotlightSurface>
             </div>
         </AppLayout>
     );

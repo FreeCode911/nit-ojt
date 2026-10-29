@@ -1,6 +1,9 @@
 import { Link, router, usePage } from '@inertiajs/react';
 import { Award, BookOpen, FileText, Pencil, Star, Trash2 } from 'lucide-react';
 import AppLayout from '@/Layouts/AppLayout';
+import GradientAccent from '@/components/AppBits/GradientAccent';
+import SpotlightSurface from '@/components/AppBits/SpotlightSurface';
+import CountUp from '@/components/reactbits/CountUp/CountUp';
 
 const LOG_STATUS_BADGES = {
     approved: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300',
@@ -33,10 +36,12 @@ export default function Show({ internship }) {
 
     return (
         <AppLayout title='Internship'>
-            <div className='card p-6 mb-6'>
+            <SpotlightSurface className='p-6! mb-6'>
                 <div className='flex flex-wrap justify-between items-start gap-4'>
                     <div>
-                        <h1 className='text-2xl font-bold'>{internship.intern_name}</h1>
+                        <h1 className='text-2xl font-bold'>
+                            <GradientAccent>{internship.intern_name}</GradientAccent>
+                        </h1>
                         <p className='text-slate-500 dark:text-slate-400'>
                             {internship.company} · {internship.position} · {internship.department}
                         </p>
@@ -80,7 +85,15 @@ export default function Show({ internship }) {
                     </div>
                     <p className='text-sm text-slate-600 dark:text-slate-300 mt-2'>
                         {internship.approved_hours} / {internship.required_hours} approved hours ·{' '}
-                        {internship.progress_percent}% · Status:{' '}
+                        <CountUp
+                            to={internship.progress_percent}
+                            suffix='%'
+                            duration={1.6}
+                            easing='easeOut'
+                            trigger='view'
+                            replayOnHover
+                        />{' '}
+                        · Status:{' '}
                         <span
                             className={`badge ${INTERNSHIP_STATUS_BADGES[internship.status]}`}
                         >
@@ -94,7 +107,7 @@ export default function Show({ internship }) {
                         {internship.notes}
                     </p>
                 )}
-            </div>
+            </SpotlightSurface>
 
             <div className='grid md:grid-cols-2 gap-6'>
                 <div className='card p-6'>

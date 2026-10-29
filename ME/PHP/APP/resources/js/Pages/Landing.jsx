@@ -38,6 +38,7 @@ import ShinyText from '../components/reactbits/ShinyText/ShinyText';
 import SpotlightCard from '../components/reactbits/SpotlightCard/SpotlightCard';
 import SplitText from '../components/reactbits/SplitText/SplitText';
 import StarBorder from '../components/reactbits/StarBorder/StarBorder';
+import SpotlightSurface from '../components/AppBits/SpotlightSurface';
 
 const FEATURE_ICONS = {
     'book-open': BookOpen,
@@ -269,6 +270,14 @@ export default function Landing({
             <section className='relative pt-24 pb-20 lg:pt-32 lg:pb-28 overflow-hidden'>
                 <div className='absolute inset-0 bg-gradient-to-b from-brand-50/50 via-white to-violet-50/50 dark:from-brand-950/30 dark:via-slate-950 dark:to-violet-950/30'></div>
                 <div className='absolute inset-0 opacity-5' style={{ backgroundImage: HERO_PATTERN }}></div>
+                <div
+                    aria-hidden='true'
+                    className='hero-aurora pointer-events-none absolute -top-48 left-1/2 h-[32rem] w-[58rem] -translate-x-1/2 rounded-full bg-brand-500/10 blur-[96px] dark:bg-brand-500/25'
+                ></div>
+                <div
+                    aria-hidden='true'
+                    className='hero-aurora-b pointer-events-none absolute top-56 left-1/2 h-[28rem] w-[46rem] -translate-x-1/2 rounded-full bg-violet-500/10 blur-[96px] dark:bg-violet-500/25'
+                ></div>
 
                 <div className='relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8'>
                     <div className='text-center max-w-4xl mx-auto'>
@@ -437,9 +446,9 @@ export default function Landing({
                             const RoleIcon =
                                 { user: User, 'user-check': UserCheck, shield: Shield }[role.icon] || User;
                             return (
-                                <article
+                                <SpotlightSurface
                                     key={role.title}
-                                    className='group relative card p-8 hover:shadow-xl hover:-translate-y-2 transition-all duration-500 animate-fade-in-up'
+                                    className='group relative hover:-translate-y-2 transition-all duration-500 animate-fade-in-up'
                                     style={{ animationDelay: `${index * 100}ms` }}
                                 >
                                     <div
@@ -463,7 +472,7 @@ export default function Landing({
                                             </li>
                                         ))}
                                     </ul>
-                                </article>
+                                </SpotlightSurface>
                             );
                         })}
                     </div>
@@ -484,9 +493,9 @@ export default function Landing({
                             </div>
                             <h2 className='text-4xl sm:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-white mb-6'>
                                 See your OJT progress{' '}
-                                <span className='bg-gradient-to-r from-brand-600 to-violet-600 bg-clip-text text-transparent'>
+                                <GradientText colors={['#4f46e5', '#7c3aed', '#4f46e5']} animationSpeed={7} yoyo>
                                     at a glance
-                                </span>
+                                </GradientText>
                             </h2>
                             <p className='text-lg text-slate-500 dark:text-slate-400 mb-8'>
                                 Beautiful, interactive dashboards give you real-time insights into hours,
@@ -579,9 +588,9 @@ export default function Landing({
                         </div>
                         <h2 className='text-4xl sm:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-white mb-6'>
                             Loved by{' '}
-                            <span className='bg-gradient-to-r from-brand-600 to-violet-600 bg-clip-text text-transparent'>
+                            <GradientText colors={['#4f46e5', '#7c3aed', '#4f46e5']} animationSpeed={7} yoyo>
                                 universities &amp; companies
-                            </span>
+                            </GradientText>
                         </h2>
                         <p className='text-lg text-slate-500 dark:text-slate-400'>
                             See what educators and supervisors say about OJT Logbook.
@@ -590,9 +599,9 @@ export default function Landing({
 
                     <div className='grid md:grid-cols-3 gap-6'>
                         {testimonials.map((t, index) => (
-                            <article
+                            <SpotlightSurface
                                 key={t.author}
-                                className='card p-8 hover:shadow-xl hover:-translate-y-1 transition-all duration-500 animate-fade-in-up'
+                                className='hover:-translate-y-1 transition-all duration-500 animate-fade-in-up'
                                 style={{ animationDelay: `${index * 100}ms` }}
                             >
                                 <div className='flex items-center gap-1 mb-6'>
@@ -615,7 +624,7 @@ export default function Landing({
                                         <p className='text-xs text-slate-400 dark:text-slate-500'>{t.org}</p>
                                     </div>
                                 </div>
-                            </article>
+                            </SpotlightSurface>
                         ))}
                     </div>
                 </div>
@@ -631,9 +640,9 @@ export default function Landing({
                         </div>
                         <h2 className='text-4xl sm:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-white mb-6'>
                             Powerful plans for{' '}
-                            <span className='bg-gradient-to-r from-brand-600 to-violet-600 bg-clip-text text-transparent'>
+                            <GradientText colors={['#4f46e5', '#7c3aed', '#4f46e5']} animationSpeed={7} yoyo>
                                 every team
-                            </span>
+                            </GradientText>
                         </h2>
                         <p className='text-lg text-slate-500 dark:text-slate-400'>
                             Start free. Upgrade when your program grows. No hidden fees, ever.
@@ -644,9 +653,9 @@ export default function Landing({
                         {Object.entries(pricing).map(([key, plan], index) => {
                             const styles = PRICING_STYLES[key];
                             return (
-                                <article
+                                <SpotlightSurface
                                     key={key}
-                                    className={`card p-8 hover:shadow-xl transition-all duration-500 animate-fade-in-up ${styles.card}`}
+                                    className={`transition-all duration-500 animate-fade-in-up ${styles.card}`}
                                     style={{ animationDelay: `${index * 100}ms` }}
                                 >
                                     {plan.badge && (
@@ -680,7 +689,7 @@ export default function Landing({
                                     >
                                         {plan.cta}
                                     </button>
-                                </article>
+                                </SpotlightSurface>
                             );
                         })}
                     </div>

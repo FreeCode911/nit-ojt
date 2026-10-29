@@ -1,6 +1,9 @@
 import AppLayout from '@/Layouts/AppLayout';
 import { Link } from '@inertiajs/react';
 import { Plus } from 'lucide-react';
+import GradientAccent from '@/components/AppBits/GradientAccent';
+import SpotlightSurface from '@/components/AppBits/SpotlightSurface';
+import Magnet from '@/components/reactbits/Magnet/Magnet';
 
 const STATUS_BADGES = {
     approved: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300',
@@ -12,22 +15,29 @@ const limit = (value, count) =>
     value && value.length > count ? `${value.slice(0, count)}...` : value;
 
 export default function LogsIndex({ logs }) {
-    const { meta, links } = logs;
+    // Inertia v3.5 serializes Laravel paginators flat (data/current_page/last_page/...)
+    // without a { data, meta, links } envelope — flatten by aliasing.
+    const meta = logs;
+    const links = { prev: logs.prev_page_url, next: logs.next_page_url };
 
     return (
         <AppLayout title='Logs'>
             <div className='flex flex-wrap justify-between items-center gap-4 mb-6'>
                 <div>
-                    <h1 className='text-3xl font-bold tracking-tight'>Log Entries</h1>
+                    <h1 className='text-3xl font-bold tracking-tight'>
+                        <GradientAccent>Log Entries</GradientAccent>
+                    </h1>
                     <p className='text-slate-500 dark:text-slate-400 mt-1'>Daily training journals</p>
                 </div>
-                <Link href={route('logs.create')} className='btn-primary'>
-                    <Plus className='w-4 h-4' />
-                    New Log
-                </Link>
+                <Magnet padding={48} magnetStrength={1.8} tilt={0} scale={1.05} wrapperClassName='shrink-0'>
+                    <Link href={route('logs.create')} className='btn-primary'>
+                        <Plus className='w-4 h-4' />
+                        New Log
+                    </Link>
+                </Magnet>
             </div>
 
-            <div className='card overflow-hidden'>
+            <SpotlightSurface className='p-0! overflow-hidden'>
                 <div className='overflow-x-auto'>
                     <table className='table-base'>
                         <thead className='bg-slate-50 dark:bg-slate-800/40'>
@@ -74,7 +84,7 @@ export default function LogsIndex({ logs }) {
                         </tbody>
                     </table>
                 </div>
-            </div>
+            </SpotlightSurface>
 
             {meta.last_page > 1 && (
                 <div className='mt-4 flex flex-wrap items-center justify-between gap-3'>

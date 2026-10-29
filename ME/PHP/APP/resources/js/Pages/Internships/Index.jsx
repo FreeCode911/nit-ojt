@@ -1,6 +1,9 @@
 import { Link } from '@inertiajs/react';
 import { Plus } from 'lucide-react';
 import AppLayout from '@/Layouts/AppLayout';
+import GradientAccent from '@/components/AppBits/GradientAccent';
+import SpotlightSurface from '@/components/AppBits/SpotlightSurface';
+import Magnet from '@/components/reactbits/Magnet/Magnet';
 
 const STATUS_BADGES = {
     pending: 'bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-300',
@@ -64,20 +67,24 @@ export default function Index({ internships, auth }) {
         <AppLayout title='Internships'>
             <div className='flex flex-wrap justify-between items-center gap-4 mb-6'>
                 <div>
-                    <h1 className='text-3xl font-bold tracking-tight'>Internships</h1>
+                    <h1 className='text-3xl font-bold tracking-tight'>
+                        <GradientAccent>Internships</GradientAccent>
+                    </h1>
                     <p className='text-slate-500 dark:text-slate-400 mt-1'>
                         Manage training programs
                     </p>
                 </div>
                 {(user.role === 'admin' || user.role === 'supervisor') && (
-                    <Link href={route('internships.create')} className='btn-primary'>
-                        <Plus className='w-4 h-4' />
-                        New
-                    </Link>
+                    <Magnet padding={48} magnetStrength={1.8} tilt={0} scale={1.05} wrapperClassName='shrink-0'>
+                        <Link href={route('internships.create')} className='btn-primary'>
+                            <Plus className='w-4 h-4' />
+                            New
+                        </Link>
+                    </Magnet>
                 )}
             </div>
 
-            <div className='card overflow-hidden'>
+            <SpotlightSurface className='p-0! overflow-hidden'>
                 <div className='overflow-x-auto'>
                     <table className='table-base'>
                         <thead className='bg-slate-50 dark:bg-slate-800/40'>
@@ -144,7 +151,7 @@ export default function Index({ internships, auth }) {
                         </tbody>
                     </table>
                 </div>
-            </div>
+            </SpotlightSurface>
 
             <Pagination paginator={internships} />
         </AppLayout>

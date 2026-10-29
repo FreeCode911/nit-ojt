@@ -1,6 +1,8 @@
 import { Link, router, usePage } from '@inertiajs/react';
 import { Building2, CalendarDays, Mail, Pencil, Phone, Trash2 } from 'lucide-react';
 import AppLayout from '@/Layouts/AppLayout';
+import GradientAccent from '@/components/AppBits/GradientAccent';
+import SpotlightSurface from '@/components/AppBits/SpotlightSurface';
 
 const ROLE_BADGES = {
     admin: 'bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-300',
@@ -28,7 +30,7 @@ export default function Show({ user }) {
     return (
         <AppLayout title='User'>
             <div className='max-w-3xl mx-auto'>
-                <div className='card overflow-hidden mb-6'>
+                <SpotlightSurface className='p-0! overflow-hidden mb-6'>
                     <div className='h-24 bg-gradient-to-r from-brand-500 to-violet-500' />
                     <div className='px-6 pb-6'>
                         <div className='flex flex-wrap items-end justify-between gap-4 -mt-10'>
@@ -50,7 +52,9 @@ export default function Show({ user }) {
                         </div>
 
                         <div className='mt-4 flex flex-wrap items-center gap-3'>
-                            <h1 className='text-2xl font-bold'>{user.name}</h1>
+                            <h1 className='text-2xl font-bold'>
+                                <GradientAccent>{user.name}</GradientAccent>
+                            </h1>
                             <span className={`badge ${ROLE_BADGES[user.role]}`}>
                                 {ROLE_LABELS[user.role] ?? user.role}
                             </span>
@@ -108,7 +112,7 @@ export default function Show({ user }) {
                             </div>
                         </div>
                     </div>
-                </div>
+                </SpotlightSurface>
 
                 <div className='flex gap-3'>
                     <Link href={route('admin.users.index')} className='btn-ghost'>

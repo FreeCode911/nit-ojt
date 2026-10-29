@@ -1,23 +1,27 @@
 import { Link } from '@inertiajs/react';
 import { CheckCircle, Inbox, TrendingUp, Users } from 'lucide-react';
 import AppLayout from '@/Layouts/AppLayout';
+import GradientAccent from '@/components/AppBits/GradientAccent';
+import SpotlightSurface from '@/components/AppBits/SpotlightSurface';
+import CountUp from '@/components/reactbits/CountUp/CountUp';
 
 const STAT_CARDS = [
     {
         label: 'Assigned Interns',
-        count: (internships) => internships.length,
+        value: (s) => s.internships.length,
         icon: Users,
         grad: 'from-blue-500 to-indigo-500',
     },
     {
         label: 'Pending Reviews',
-        count: (_, pendingLogs) => pendingLogs.length,
+        value: (s) => s.pendingLogs.length,
         icon: Inbox,
         grad: 'from-amber-500 to-orange-500',
     },
     {
         label: 'Total Approved Hours',
-        count: (_, __, totalApprovedHours) => `${totalApprovedHours}h`,
+        value: (s) => s.totalApprovedHours,
+        suffix: 'h',
         icon: TrendingUp,
         grad: 'from-emerald-500 to-teal-500',
     },
@@ -27,22 +31,34 @@ export default function Supervisor({ internships, pendingLogs, totalApprovedHour
     return (
         <AppLayout title='Supervisor Dashboard'>
             <div className='mb-8'>
-                <h1 className='text-3xl font-bold tracking-tight'>Supervisor Dashboard</h1>
+                <h1 className='text-3xl font-bold tracking-tight'>
+                    <GradientAccent>Supervisor Dashboard</GradientAccent>
+                </h1>
                 <p className='text-slate-500 dark:text-slate-400 mt-1'>Your interns and pending reviews</p>
             </div>
 
             {/* Stat cards */}
             <div className='grid md:grid-cols-3 gap-4 mb-6'>
-                {STAT_CARDS.map(({ label, count, icon: Icon, grad }) => (
-                    <div key={label} className='card p-5 flex items-center gap-4'>
+                {STAT_CARDS.map(({ label, value, suffix = '', icon: Icon, grad }) => (
+                    <SpotlightSurface key={label} className='p-5! flex relative items-center gap-4'>
                         <div className={`p-3 rounded-xl bg-gradient-to-br ${grad} text-white shadow-md`}>
                             <Icon className='w-6 h-6' />
                         </div>
                         <div>
-                            <div className='text-2xl font-bold'>{count(internships, pendingLogs, totalApprovedHours)}</div>
+                            <div className='text-2xl font-bold'>
+                                <CountUp
+                                    to={value({ internships, pendingLogs, totalApprovedHours })}
+                                    suffix={suffix}
+                                    duration={1.6}
+                                    separator=','
+                                    easing='easeOut'
+                                    trigger='view'
+                                    replayOnHover
+                                />
+                            </div>
                             <div className='text-xs text-slate-500 dark:text-slate-400'>{label}</div>
                         </div>
-                    </div>
+                    </SpotlightSurface>
                 ))}
             </div>
 

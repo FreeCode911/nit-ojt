@@ -10,6 +10,9 @@ import {
 } from 'lucide-react';
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
 import AppLayout from '@/Layouts/AppLayout';
+import GradientAccent from '@/components/AppBits/GradientAccent';
+import SpotlightSurface from '@/components/AppBits/SpotlightSurface';
+import CountUp from '@/components/reactbits/CountUp/CountUp';
 
 const STAT_CARDS = [
     { label: 'Users', key: 'users', icon: Users, grad: 'from-blue-500 to-cyan-500' },
@@ -51,14 +54,16 @@ export default function Admin({ stats, statusCounts, recent }) {
     return (
         <AppLayout title='Admin Dashboard'>
             <div className='mb-8'>
-                <h1 className='text-3xl font-bold tracking-tight'>Admin Dashboard</h1>
+                <h1 className='text-3xl font-bold tracking-tight'>
+                    <GradientAccent>Admin Dashboard</GradientAccent>
+                </h1>
                 <p className='text-slate-500 dark:text-slate-400 mt-1'>Overview of the whole platform</p>
             </div>
 
             {/* Stat cards */}
             <div className='grid grid-cols-2 md:grid-cols-4 gap-4 mb-8'>
                 {STAT_CARDS.map(({ label, key, icon: Icon, grad }) => (
-                    <div key={label} className='card p-6 relative overflow-hidden'>
+                    <SpotlightSurface key={label} className='p-6 relative'>
                         <div
                             className={`absolute -right-4 -top-4 w-24 h-24 rounded-full bg-gradient-to-br ${grad} opacity-10`}
                         />
@@ -67,11 +72,13 @@ export default function Admin({ stats, statusCounts, recent }) {
                                 <Icon className='w-5 h-5' />
                             </div>
                             <div>
-                                <div className='text-2xl font-bold'>{stats[key]}</div>
+                                <div className='text-2xl font-bold'>
+                                    <CountUp to={stats[key]} duration={1.6} separator=',' easing='easeOut' trigger='view' replayOnHover />
+                                </div>
                                 <div className='text-xs text-slate-500 dark:text-slate-400'>{label}</div>
                             </div>
                         </div>
-                    </div>
+                    </SpotlightSurface>
                 ))}
             </div>
 
@@ -154,7 +161,7 @@ export default function Admin({ stats, statusCounts, recent }) {
             </div>
 
             {/* Recent internships */}
-            <div className='card overflow-hidden'>
+            <SpotlightSurface className='p-0! overflow-hidden'>
                 <div className='px-6 py-4 border-b border-slate-200/60 dark:border-slate-700/60 flex items-center justify-between'>
                     <h2 className='font-semibold flex items-center gap-2'>
                         <List className='w-4 h-4' />
@@ -207,7 +214,7 @@ export default function Admin({ stats, statusCounts, recent }) {
                         </tbody>
                     </table>
                 </div>
-            </div>
+            </SpotlightSurface>
         </AppLayout>
     );
 }

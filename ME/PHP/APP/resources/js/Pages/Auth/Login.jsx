@@ -1,4 +1,7 @@
 import GuestLayout from '../../Layouts/GuestLayout';
+import GradientAccent from '../../components/AppBits/GradientAccent';
+import SpotlightSurface from '../../components/AppBits/SpotlightSurface';
+import StarSubmit from '../../components/AppBits/StarSubmit';
 import { useForm } from '@inertiajs/react';
 
 export default function Login() {
@@ -24,11 +27,13 @@ export default function Login() {
                         alt='OJT Logbook'
                         className='h-16 w-16 object-contain mx-auto mb-4 drop-shadow-lg'
                     />
-                    <h1 className='text-3xl font-bold tracking-tight'>Welcome back</h1>
+                    <h1 className='text-3xl font-bold tracking-tight'>
+                        <GradientAccent>Welcome back</GradientAccent>
+                    </h1>
                     <p className='text-slate-500 dark:text-slate-400 mt-2'>Sign in to your OJT Logbook</p>
                 </div>
 
-                <div className='card p-8'>
+                <SpotlightSurface className='p-8'>
                     <form onSubmit={submit} className='space-y-5'>
                         <div>
                             <label className='label'>Email</label>
@@ -69,13 +74,7 @@ export default function Login() {
                             </label>
                         </div>
 
-                        <button
-                            type='submit'
-                            disabled={processing}
-                            className='btn-primary w-full justify-center disabled:opacity-60'
-                        >
-                            {processing ? 'Signing in...' : 'Sign in'}
-                        </button>
+                        <StarSubmit>{processing ? 'Signing in...' : 'Sign in'}</StarSubmit>
                     </form>
 
                     <p className='mt-6 text-center text-sm text-slate-500 dark:text-slate-400'>
@@ -87,7 +86,7 @@ export default function Login() {
                             Create one
                         </a>
                     </p>
-                </div>
+                </SpotlightSurface>
             </div>
         </GuestLayout>
     );

@@ -1,6 +1,9 @@
 import { Link } from '@inertiajs/react';
 import { BookOpen, Calendar } from 'lucide-react';
 import AppLayout from '@/Layouts/AppLayout';
+import GradientAccent from '@/components/AppBits/GradientAccent';
+import SpotlightSurface from '@/components/AppBits/SpotlightSurface';
+import CountUp from '@/components/reactbits/CountUp/CountUp';
 
 const LOG_BADGE = {
     approved: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300',
@@ -11,12 +14,14 @@ export default function Intern({ internship, recentLogs, todayLog }) {
     return (
         <AppLayout title='Intern Dashboard'>
             <div className='mb-8'>
-                <h1 className='text-3xl font-bold tracking-tight'>Intern Dashboard</h1>
+                <h1 className='text-3xl font-bold tracking-tight'>
+                    <GradientAccent>Intern Dashboard</GradientAccent>
+                </h1>
                 <p className='text-slate-500 dark:text-slate-400 mt-1'>Track your OJT progress</p>
             </div>
 
             {internship && (
-                <div className='card p-6 mb-6 relative overflow-hidden'>
+                <SpotlightSurface className='p-6! mb-6 relative'>
                     <div className='absolute inset-0 bg-gradient-to-br from-brand-500/10 to-violet-500/10 pointer-events-none' />
                     <div className='relative'>
                         <div className='flex flex-wrap justify-between items-start gap-3 mb-3'>
@@ -45,11 +50,18 @@ export default function Intern({ internship, recentLogs, todayLog }) {
                                 {internship.approved_hours} / {internship.required_hours} hours
                             </span>
                             <span className='text-brand-600 dark:text-brand-400 font-semibold'>
-                                {internship.progress_percent}%
+                                <CountUp
+                                    to={internship.progress_percent}
+                                    suffix='%'
+                                    duration={1.6}
+                                    easing='easeOut'
+                                    trigger='view'
+                                    replayOnHover
+                                />
                             </span>
                         </div>
                     </div>
-                </div>
+                </SpotlightSurface>
             )}
 
             <div className='grid md:grid-cols-2 gap-6'>

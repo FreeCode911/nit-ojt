@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export function useTheme() {
     const [dark, setDark] = useState(() =>
@@ -17,4 +17,25 @@ export function useTheme() {
     };
 
     return { dark, toggleTheme };
+}
+
+/**
+ * Tracks the html.dark attribute reactively, so components rendered outside
+ * the useTheme() owner (layouts) still follow live theme toggles.
+ */
+export function useHtmlDark() {
+    const [dark, setDark] = useState(() =>
+        document.documentElement.classList.contains('dark'),
+    );
+
+    useEffect(() => {
+        const el = document.documentElement;
+        const observer = new MutationObserver(() => {
+            setDark(el.classList.contains('dark'));
+        });
+        observer.observe(el, { attributes: true, attributeFilter: ['class'] });
+        return () => observer.disconnect();
+    }, []);
+
+    return dark;
 }

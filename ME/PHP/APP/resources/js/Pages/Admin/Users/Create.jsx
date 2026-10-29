@@ -1,5 +1,7 @@
 import { Link, useForm } from '@inertiajs/react';
 import AppLayout from '@/Layouts/AppLayout';
+import GradientAccent from '@/components/AppBits/GradientAccent'; 
+import SpotlightSurface from '@/components/AppBits/SpotlightSurface';
 
 export default function Create() {
     const { data, setData, post, processing, errors } = useForm({
@@ -22,11 +24,11 @@ export default function Create() {
         <AppLayout title='New User'>
             <div className='max-w-3xl mx-auto'>
                 <div className='mb-6'>
-                    <h1 className='text-3xl font-bold tracking-tight'>New User</h1>
+                    <h1 className='text-3xl font-bold tracking-tight'><GradientAccent>New User</GradientAccent></h1>
                     <p className='text-slate-500 dark:text-slate-400 mt-1'>Create an account</p>
                 </div>
 
-                <div className='card p-8'>
+                <SpotlightSurface>
                     <form onSubmit={submit} className='space-y-5'>
                         <div className='grid md:grid-cols-2 gap-5'>
                             <div>
@@ -180,7 +182,7 @@ export default function Create() {
                             </Link>
                         </div>
                     </form>
-                </div>
+                </SpotlightSurface>
             </div>
         </AppLayout>
     );

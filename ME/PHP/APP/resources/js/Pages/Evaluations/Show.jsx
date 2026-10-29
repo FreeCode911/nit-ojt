@@ -1,6 +1,8 @@
 import AppLayout from '@/Layouts/AppLayout';
 import { Link } from '@inertiajs/react';
 import { Edit } from 'lucide-react';
+import GradientAccent from '@/components/AppBits/GradientAccent';
+import SpotlightSurface from '@/components/AppBits/SpotlightSurface';
 
 const CRITERIA = ['attendance', 'performance', 'initiative', 'teamwork', 'communication'];
 
@@ -19,8 +21,10 @@ export default function EvaluationsShow({ evaluation }) {
     return (
         <AppLayout title='Evaluation'>
             <div className='max-w-3xl mx-auto'>
-                <div className='card p-8'>
-                    <h1 className='text-2xl font-bold mb-1'>{evaluation.period}</h1>
+                <SpotlightSurface>
+                    <h1 className='text-2xl font-bold mb-1'>
+                        <GradientAccent>{evaluation.period}</GradientAccent>
+                    </h1>
                     <p className='text-slate-500 dark:text-slate-400 text-sm mb-6'>
                         {evaluation.internship?.intern?.name} · {evaluation.internship?.company} · by{' '}
                         {evaluation.supervisor?.name}
@@ -81,7 +85,7 @@ export default function EvaluationsShow({ evaluation }) {
                             Back
                         </Link>
                     </div>
-                </div>
+                </SpotlightSurface>
             </div>
         </AppLayout>
     );

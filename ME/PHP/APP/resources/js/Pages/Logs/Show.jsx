@@ -1,6 +1,8 @@
 import AppLayout from '@/Layouts/AppLayout';
 import { Link, useForm } from '@inertiajs/react';
 import { Check, Edit, Paperclip, X } from 'lucide-react';
+import GradientAccent from '@/components/AppBits/GradientAccent';
+import SpotlightSurface from '@/components/AppBits/SpotlightSurface';
 
 const STATUS_BADGES = {
     approved: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300',
@@ -20,10 +22,12 @@ export default function LogsShow({ log, auth }) {
     return (
         <AppLayout title='Log Entry'>
             <div className='max-w-3xl mx-auto'>
-                <div className='card p-8'>
+                <SpotlightSurface>
                     <div className='flex flex-wrap justify-between items-start gap-4 mb-6'>
                         <div>
-                            <h1 className='text-2xl font-bold'>{log.task}</h1>
+                            <h1 className='text-2xl font-bold'>
+                                <GradientAccent>{log.task}</GradientAccent>
+                            </h1>
                             <p className='text-slate-500 dark:text-slate-400 text-sm'>
                                 {log.user?.name} · {log.internship?.company} · {log.log_date_display} ·{' '}
                                 {log.hours}h
@@ -163,7 +167,7 @@ export default function LogsShow({ log, auth }) {
                             Back
                         </Link>
                     </div>
-                </div>
+                </SpotlightSurface>
             </div>
         </AppLayout>
     );

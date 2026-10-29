@@ -19,6 +19,7 @@
 	--color-brand-700: #4338ca;
 	--color-brand-800: #3730a3;
 	--color-brand-900: #312e81;
+	--color-brand-950: #1e1b4b;
 	
 	--radius: 0.5rem;
 	--background: 0 0% 100%;
@@ -72,6 +73,19 @@
 	}
 	html {
 		scroll-behavior: smooth;
+	}
+	@keyframes aurora-drift {
+		0%, 100% { transform: translate(-50%, 0) scale(1); }
+		50% { transform: translate(-42%, 4%) scale(1.12); }
+	}
+	@keyframes aurora-drift-b {
+		0%, 100% { transform: translate(-50%, 0) scale(1.05); }
+		50% { transform: translate(-58%, -3%) scale(0.94); }
+	}
+	.hero-aurora { animation: aurora-drift 16s ease-in-out infinite; }
+	.hero-aurora-b { animation: aurora-drift-b 22s ease-in-out infinite; }
+	@media (prefers-reduced-motion: reduce) {
+		.hero-aurora, .hero-aurora-b { animation: none; }
 	}
 }
 

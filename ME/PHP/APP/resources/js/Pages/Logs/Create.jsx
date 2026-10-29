@@ -1,4 +1,6 @@
 import AppLayout from '@/Layouts/AppLayout';
+import GradientAccent from '@/components/AppBits/GradientAccent'; 
+import SpotlightSurface from '@/components/AppBits/SpotlightSurface';
 import { Link, useForm } from '@inertiajs/react';
 
 const MOODS = ['great', 'good', 'okay', 'tired', 'stressed'];
@@ -28,12 +30,12 @@ export default function LogsCreate({ internships }) {
         <AppLayout title='New Log'>
             <div className='max-w-3xl mx-auto'>
                 <div className='mb-6'>
-                    <h1 className='text-3xl font-bold tracking-tight'>New Log Entry</h1>
+                    <h1 className='text-3xl font-bold tracking-tight'><GradientAccent>New Log Entry</GradientAccent></h1>
                     <p className='text-slate-500 dark:text-slate-400 mt-1'>
                         Record today's training activity
                     </p>
                 </div>
-                <div className='card p-8'>
+                <SpotlightSurface>
                     <form onSubmit={submit} className='space-y-5'>
                         <div>
                             <label className='label'>Internship</label>
@@ -210,7 +212,7 @@ export default function LogsCreate({ internships }) {
                             </Link>
                         </div>
                     </form>
-                </div>
+                </SpotlightSurface>
             </div>
         </AppLayout>
     );
