@@ -5,10 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\Internship;
 use App\Models\LogEntry;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class LogEntryController extends Controller
 {
-    public function index()
+    public function index(): Response
     {
         $user = auth()->user();
         if ($user->isAdmin()) {
@@ -17,22 +20,30 @@ class LogEntryController extends Controller
             $logs = LogEntry::whereHas('internship', fn ($q) => $q->where('supervisor_id', $user->id))
                 ->with(['user', 'internship'])->latest('log_date')->paginate(20);
         } else {
-            $logs = LogEntry::where('user_id', $user->id)->with('internship')->latest('log_date')->paginate(20);
+            $logs = LogEntry::where('user_id', $user->id)->with(['user', 'internship'])->latest('log_date')->paginate(20);
         }
 
-        return view('logs.index', compact('logs'));
+        $logs->getCollection()->transform(function (LogEntry $log) {
+            $log->log_date_display = $log->log_date->format('M d, Y');
+
+            return $log;
+        });
+
+        return Inertia::render('Logs/Index', ['logs' => $logs]);
     }
 
-    public function create()
+    public function create(): Response
     {
         $user = auth()->user();
         if ($user->isIntern()) {
-            $internships = Internship::where('intern_id', $user->id)->where('status', 'active')->get();
+            $internships = Internship::where('intern_id', $user->id)->where('status', 'active')->with('intern')->get();
         } else {
             $internships = Internship::where('status', 'active')->with('intern')->get();
         }
 
-        return view('logs.create', compact('internships'));
+        return Inertia::render('Logs/Create', [
+            'internships' => $this->mapInternshipOptions($internships),
+        ]);
     }
 
     public function store(Request $request)
@@ -79,22 +90,32 @@ class LogEntryController extends Controller
         return redirect()->route('logs.index')->with('success', 'Log entry saved.');
     }
 
-    public function show(LogEntry $log)
+    public function show(LogEntry $log): Response
     {
         $this->authorizeView($log);
 
-        return view('logs.show', compact('log'));
+        $log->load(['user', 'internship', 'reviewer']);
+        $log->log_date_display = $log->log_date->format('M d, Y');
+        $log->evidence_url = $log->evidence_path ? asset('storage/'.$log->evidence_path) : null;
+        $log->reviewed_at_display = $log->reviewed_at?->format('M d, Y H:i');
+
+        return Inertia::render('Logs/Show', ['log' => $log]);
     }
 
-    public function edit(LogEntry $log)
+    public function edit(LogEntry $log): Response
     {
         $this->authorizeOwner($log);
-        $internships = Internship::where('intern_id', auth()->id())->get();
+        $internships = Internship::where('intern_id', auth()->id())->with('intern')->get();
         if (auth()->user()->isAdmin() || auth()->user()->isSupervisor()) {
-            $internships = Internship::all();
+            $internships = Internship::with('intern')->get();
         }
 
-        return view('logs.edit', compact('log', 'internships'));
+        $log->log_date_input = $log->log_date->format('Y-m-d');
+
+        return Inertia::render('Logs/Edit', [
+            'log' => $log,
+            'internships' => $this->mapInternshipOptions($internships),
+        ]);
     }
 
     public function update(Request $request, LogEntry $log)
@@ -216,5 +237,22 @@ class LogEntryController extends Controller
             return;
         }
         abort(403);
+    }
+
+    /**
+     * @param  Collection<int, Internship>  $internships
+     * @return array<int, array<string, mixed>>
+     */
+    protected function mapInternshipOptions($internships): array
+    {
+        return $internships
+            ->map(fn (Internship $internship) => [
+                'id' => $internship->id,
+                'company' => $internship->company,
+                'position' => $internship->position,
+                'department' => $internship->department,
+                'intern' => ['name' => $internship->intern->name ?? ''],
+            ])
+            ->all();
     }
 }

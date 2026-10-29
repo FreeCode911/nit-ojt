@@ -7,19 +7,34 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class UserController extends Controller
 {
-    public function index()
+    public function index(): Response
     {
         $users = User::latest()->paginate(20);
+        $users->getCollection()->transform(function (User $user) {
+            return [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'role' => $user->role,
+                'department' => $user->department,
+                'company' => $user->company,
+                'created_at' => $user->created_at->format('M d, Y'),
+            ];
+        });
 
-        return view('admin.users.index', compact('users'));
+        return Inertia::render('Admin/Users/Index', [
+            'users' => $users,
+        ]);
     }
 
-    public function create()
+    public function create(): Response
     {
-        return view('admin.users.create');
+        return Inertia::render('Admin/Users/Create');
     }
 
     public function store(Request $request)
@@ -39,14 +54,35 @@ class UserController extends Controller
         return redirect()->route('admin.users.index')->with('success', 'User created.');
     }
 
-    public function show(User $user)
+    public function show(User $user): Response
     {
-        return view('admin.users.show', compact('user'));
+        return Inertia::render('Admin/Users/Show', [
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'role' => $user->role,
+                'department' => $user->department,
+                'company' => $user->company,
+                'phone' => $user->phone,
+                'created_at' => $user->created_at->format('M d, Y'),
+            ],
+        ]);
     }
 
-    public function edit(User $user)
+    public function edit(User $user): Response
     {
-        return view('admin.users.edit', compact('user'));
+        return Inertia::render('Admin/Users/Edit', [
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'role' => $user->role,
+                'department' => $user->department,
+                'company' => $user->company,
+                'phone' => $user->phone,
+            ],
+        ]);
     }
 
     public function update(Request $request, User $user)

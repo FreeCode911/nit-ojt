@@ -3,20 +3,53 @@
 namespace App\Http\Controllers;
 
 use App\Models\Certificate;
+use App\Models\Evaluation;
 use App\Models\Internship;
+use App\Models\LogEntry;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class ReportController extends Controller
 {
-    public function intern(Internship $internship)
+    public function intern(Internship $internship): Response
     {
         $this->authorizeView($internship);
-        $internship->load(['intern', 'supervisor', 'logEntries', 'evaluations']);
+        $internship->load(['intern', 'supervisor', 'logEntries', 'evaluations', 'certificates']);
         $approvedHours = $internship->approvedHours;
         $totalLogs = $internship->logEntries->count();
         $approvedLogs = $internship->logEntries->where('status', 'approved')->count();
 
-        return view('reports.intern', compact('internship', 'approvedHours', 'totalLogs', 'approvedLogs'));
+        $internship = [
+            'id' => $internship->id,
+            'company' => $internship->company,
+            'position' => $internship->position,
+            'supervisor_id' => $internship->supervisor_id,
+            'intern_name' => $internship->intern->name,
+            'supervisor_name' => $internship->supervisor->name,
+            'required_hours' => $internship->required_hours,
+            // computed explicitly: accessors are not auto-serialized
+            'progress_percent' => $internship->progressPercent,
+            'log_entries' => $internship->logEntries->map(fn (LogEntry $log): array => [
+                'log_date' => $log->log_date->format('M d, Y'),
+                'task' => $log->task,
+                'hours' => $log->hours,
+                'status' => $log->status,
+            ]),
+            'evaluations' => $internship->evaluations->map(fn (Evaluation $evaluation): array => [
+                'period' => $evaluation->period,
+                'overall' => $evaluation->overall,
+                'recommendation' => $evaluation->recommendation,
+                'comments' => $evaluation->comments,
+            ]),
+            'certificates' => $internship->certificates->map(fn (Certificate $certificate): array => [
+                'certificate_number' => $certificate->certificate_number,
+                'issued_to' => $certificate->issued_to,
+                'issued_date' => $certificate->issued_date->format('M d, Y'),
+            ]),
+        ];
+
+        return Inertia::render('Reports/Intern', compact('internship', 'approvedHours', 'totalLogs', 'approvedLogs'));
     }
 
     public function issueCertificate(Request $request, Internship $internship)

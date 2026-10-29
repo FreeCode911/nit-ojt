@@ -1,0 +1,12 @@
+const fs = require('fs'); const lines = []; 
+lines.push('/**'); 
+lines.push(' * React Islands Mounting System'); 
+lines.push(' *');  
+lines.push(' * This system allows embedding React components (islands) into Blade templates');  
+lines.push(' * with full interactivity while keeping the rest of the page as server-rendered HTML.');  
+lines.push(' */');  
+lines.push(''); 
+lines.push('import { createRoot, Root } from \" "react-dom/client\;');  
+lines.push('import type { ReactElement } from \react\;');  
+lines.push('import React from \react\;');  
+lines.push(''); 

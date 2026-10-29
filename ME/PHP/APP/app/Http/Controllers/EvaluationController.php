@@ -5,10 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\Evaluation;
 use App\Models\Internship;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class EvaluationController extends Controller
 {
-    public function index()
+    public function index(): Response
     {
         $user = auth()->user();
         if ($user->isAdmin()) {
@@ -17,13 +20,13 @@ class EvaluationController extends Controller
             $evaluations = Evaluation::where('supervisor_id', $user->id)->with('internship.intern')->latest()->paginate(20);
         } else {
             $evaluations = Evaluation::whereHas('internship', fn ($q) => $q->where('intern_id', $user->id))
-                ->with('supervisor')->latest()->paginate(20);
+                ->with(['internship.intern', 'supervisor'])->latest()->paginate(20);
         }
 
-        return view('evaluations.index', compact('evaluations'));
+        return Inertia::render('Evaluations/Index', ['evaluations' => $evaluations]);
     }
 
-    public function create()
+    public function create(): Response
     {
         $user = auth()->user();
         if ($user->isAdmin()) {
@@ -32,7 +35,9 @@ class EvaluationController extends Controller
             $internships = Internship::where('supervisor_id', $user->id)->with('intern')->get();
         }
 
-        return view('evaluations.create', compact('internships'));
+        return Inertia::render('Evaluations/Create', [
+            'internships' => $this->mapInternshipOptions($internships),
+        ]);
     }
 
     public function store(Request $request)
@@ -78,16 +83,21 @@ class EvaluationController extends Controller
         return redirect()->route('evaluations.index')->with('success', 'Evaluation saved.');
     }
 
-    public function show(Evaluation $evaluation)
+    public function show(Evaluation $evaluation): Response
     {
-        return view('evaluations.show', compact('evaluation'));
+        $evaluation->load(['internship.intern', 'supervisor']);
+
+        return Inertia::render('Evaluations/Show', ['evaluation' => $evaluation]);
     }
 
-    public function edit(Evaluation $evaluation)
+    public function edit(Evaluation $evaluation): Response
     {
         $internships = Internship::with('intern')->get();
 
-        return view('evaluations.edit', compact('evaluation', 'internships'));
+        return Inertia::render('Evaluations/Edit', [
+            'evaluation' => $evaluation,
+            'internships' => $this->mapInternshipOptions($internships),
+        ]);
     }
 
     public function update(Request $request, Evaluation $evaluation)
@@ -116,5 +126,20 @@ class EvaluationController extends Controller
         $evaluation->delete();
 
         return redirect()->route('evaluations.index')->with('success', 'Evaluation deleted.');
+    }
+
+    /**
+     * @param  Collection<int, Internship>  $internships
+     * @return array<int, array<string, mixed>>
+     */
+    protected function mapInternshipOptions($internships): array
+    {
+        return $internships
+            ->map(fn (Internship $internship) => [
+                'id' => $internship->id,
+                'company' => $internship->company,
+                'intern' => ['name' => $internship->intern->name ?? ''],
+            ])
+            ->all();
     }
 }

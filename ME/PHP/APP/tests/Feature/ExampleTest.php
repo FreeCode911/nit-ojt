@@ -1,9 +1,14 @@
 <?php
 
-test('the application redirects guests to login', function () {
+use Illuminate\Foundation\Testing\RefreshDatabase;
+
+uses(RefreshDatabase::class);
+
+test('the landing page loads for guests', function () {
     $response = $this->get('/');
 
-    $response->assertRedirect(route('login'));
+    $response->assertStatus(200);
+    $response->assertSee('OJT Logbook');
 });
 
 test('the login page loads', function () {
