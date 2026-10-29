@@ -4,9 +4,9 @@ use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EvaluationController;
-use App\Http\Controllers\PageController;
 use App\Http\Controllers\InternshipController;
 use App\Http\Controllers\LogEntryController;
+use App\Http\Controllers\PageController;
 use App\Http\Controllers\ReportController;
 use Illuminate\Support\Facades\Route;
 
@@ -34,6 +34,8 @@ Route::middleware('auth')->group(function () {
 
     Route::get('reports/intern/{internship}', [ReportController::class, 'intern'])->name('reports.intern');
     Route::post('reports/intern/{internship}/certificate', [ReportController::class, 'issueCertificate'])->name('reports.certificate');
+    Route::get('reports/intern/{internship}/certificate-pdf', [ReportController::class, 'certificatePdf'])->name('reports.certificate-pdf');
+    Route::get('certificates/{certificate}/pdf', [ReportController::class, 'downloadCertificate'])->name('certificates.pdf');
 
     Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
         Route::resource('users', AdminUserController::class);

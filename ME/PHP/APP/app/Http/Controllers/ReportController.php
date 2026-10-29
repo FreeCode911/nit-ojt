@@ -6,9 +6,11 @@ use App\Models\Certificate;
 use App\Models\Evaluation;
 use App\Models\Internship;
 use App\Models\LogEntry;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
+use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
 class ReportController extends Controller
 {
@@ -43,6 +45,7 @@ class ReportController extends Controller
                 'comments' => $evaluation->comments,
             ]),
             'certificates' => $internship->certificates->map(fn (Certificate $certificate): array => [
+                'id' => $certificate->id,
                 'certificate_number' => $certificate->certificate_number,
                 'issued_to' => $certificate->issued_to,
                 'issued_date' => $certificate->issued_date->format('M d, Y'),
@@ -57,7 +60,7 @@ class ReportController extends Controller
         $request->validate([
             'issued_by' => ['nullable', 'string', 'max:255'],
         ]);
-        $number = 'CERT-'.str_pad($internship->id, 5, '0', STR_PAD_LEFT).'-'.now()->format('Y');
+        $number = $this->nextCertificateNumber($internship);
         $cert = Certificate::create([
             'internship_id' => $internship->id,
             'certificate_number' => $number,
@@ -67,6 +70,89 @@ class ReportController extends Controller
         ]);
 
         return redirect()->route('reports.intern', $internship)->with('success', 'Certificate issued: '.$cert->certificate_number);
+    }
+
+    /**
+     * Stream a personalized OJT certificate PDF for the internship. The
+     * first download auto-issues the certificate, so every intern always
+     * has one personal certificate that can be regenerated at any time.
+     */
+    public function certificatePdf(Internship $internship): SymfonyResponse
+    {
+        $this->authorizeView($internship);
+
+        $certificate = $internship->certificates()->orderByDesc('id')->first()
+            ?? $internship->certificates()->create([
+                'certificate_number' => $this->nextCertificateNumber($internship),
+                'issued_to' => $internship->intern->name,
+                'issued_by' => $internship->supervisor->name,
+                'issued_date' => today(),
+            ]);
+
+        return $this->streamCertificate($certificate);
+    }
+
+    /**
+     * Stream the PDF document for one specific certificate record.
+     */
+    public function downloadCertificate(Certificate $certificate): SymfonyResponse
+    {
+        $certificate->load(['internship.intern', 'internship.supervisor']);
+        $this->authorizeView($certificate->internship);
+
+        return $this->streamCertificate($certificate);
+    }
+
+    private function streamCertificate(Certificate $certificate): SymfonyResponse
+    {
+        $pdf = Pdf::loadView('pdf.certificate', $this->certificateData($certificate))
+            ->setPaper('a4', 'landscape');
+
+        return $pdf->download($certificate->certificate_number.'.pdf');
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function certificateData(Certificate $certificate): array
+    {
+        $internship = $certificate->internship;
+
+        return [
+            'certificate' => [
+                'number' => $certificate->certificate_number,
+                'issued_to' => $certificate->issued_to,
+                'issued_by' => $certificate->issued_by,
+                'issued_date' => $certificate->issued_date->format('F j, Y'),
+            ],
+            'internship' => [
+                'position' => (string) $internship->position,
+                'company' => $internship->company,
+                'department' => (string) $internship->department,
+                'supervisor_name' => $internship->supervisor->name,
+                'period' => $internship->start_date->format('M j, Y').' — '.$internship->end_date->format('M j, Y'),
+                'approved_hours' => $this->formatHours($internship->approvedHours),
+                'required_hours' => $this->formatHours((float) $internship->required_hours),
+                'progress_percent' => $internship->progressPercent,
+            ],
+            'app_name' => (string) config('app.name'),
+        ];
+    }
+
+    private function formatHours(float $hours): string
+    {
+        $rounded = round($hours, 2);
+
+        if ($rounded == floor($rounded)) {
+            return (string) (int) $rounded;
+        }
+
+        return number_format($rounded, 2);
+    }
+
+    private function nextCertificateNumber(Internship $internship): string
+    {
+        return 'CERT-'.str_pad((string) $internship->id, 5, '0', STR_PAD_LEFT).'-'.now()->format('Y');
     }
 
     protected function authorizeView(Internship $internship): void

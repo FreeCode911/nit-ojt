@@ -1,6 +1,6 @@
 import { usePage } from '@inertiajs/react';
 import { useForm } from '@inertiajs/react';
-import { Award, BookOpen, Check, CheckCircle, Star, Target } from 'lucide-react';
+import { Award, BookOpen, Check, CheckCircle, Download, Star, Target } from 'lucide-react';
 import AppLayout from '@/Layouts/AppLayout';
 import GradientAccent from '@/components/AppBits/GradientAccent';
 import SpotlightSurface from '@/components/AppBits/SpotlightSurface';
@@ -134,13 +134,28 @@ export default function InternReport({ internship, approvedHours, totalLogs, app
                     )}
                 </div>
 
-                {canIssueCertificate && (
-                    <div className='card p-6'>
-                        <h2 className='font-semibold flex items-center gap-2 mb-4'>
+                <div className='card p-6'>
+                    <div className='flex justify-between flex-wrap gap-3 items-center mb-4'>
+                        <h2 className='font-semibold flex items-center gap-2'>
                             <Award className='w-4 h-4' />
-                            Issue Certificate
+                            Certificate
                         </h2>
-                        <form onSubmit={submit} className='flex gap-3 items-end flex-wrap'>
+                        <a
+                            href={route('reports.certificate-pdf', internship.id)}
+                            className='btn-primary inline-flex items-center gap-2'
+                        >
+                            <Download className='w-4 h-4' />
+                            Download PDF
+                        </a>
+                    </div>
+                    <p className='text-sm text-slate-500 dark:text-slate-400 mb-4'>
+                        {internship.certificates.length > 0
+                            ? 'Downloading generates a fresh PDF of the issued certificate.'
+                            : 'No certificate issued yet — downloading generates the personal certificate automatically.'}
+                    </p>
+
+                    {canIssueCertificate && (
+                        <form onSubmit={submit} className='flex gap-3 items-end flex-wrap mb-5'>
                             <div className='flex-1 min-w-[200px]'>
                                 <label className='label'>Issued by</label>
                                 <input
@@ -155,25 +170,37 @@ export default function InternReport({ internship, approvedHours, totalLogs, app
                                 Issue
                             </button>
                         </form>
+                    )}
 
-                        {internship.certificates.length > 0 && (
-                            <div className='mt-5'>
-                                <h3 className='text-sm font-semibold text-slate-700 dark:text-slate-200'>
-                                    Issued Certificates
-                                </h3>
-                                <ul className='text-sm text-slate-600 dark:text-slate-300 mt-2 space-y-1'>
-                                    {internship.certificates.map((certificate) => (
-                                        <li key={certificate.certificate_number} className='flex items-center gap-2'>
+                    {internship.certificates.length > 0 && (
+                        <div>
+                            <h3 className='text-sm font-semibold text-slate-700 dark:text-slate-200'>
+                                Issued Certificates
+                            </h3>
+                            <ul className='text-sm text-slate-600 dark:text-slate-300 mt-2 space-y-2'>
+                                {internship.certificates.map((certificate) => (
+                                    <li
+                                        key={certificate.id}
+                                        className='flex items-center justify-between gap-2'
+                                    >
+                                        <span className='flex items-center gap-2'>
                                             <Award className='w-3.5 h-3.5 text-brand-600' />
                                             {certificate.certificate_number} — {certificate.issued_to} (
                                             {certificate.issued_date})
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
-                        )}
-                    </div>
-                )}
+                                        </span>
+                                        <a
+                                            href={route('certificates.pdf', certificate.id)}
+                                            className='inline-flex items-center gap-1.5 text-brand-600 dark:text-brand-400 hover:underline'
+                                        >
+                                            <Download className='w-3.5 h-3.5' />
+                                            PDF
+                                        </a>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
+                </div>
             </div>
         </AppLayout>
     );

@@ -1,5 +1,5 @@
 import { Link, router, usePage } from '@inertiajs/react';
-import { Award, BookOpen, FileText, Pencil, Star, Trash2 } from 'lucide-react';
+import { Award, BookOpen, Download, FileText, Pencil, Star, Trash2 } from 'lucide-react';
 import AppLayout from '@/Layouts/AppLayout';
 import GradientAccent from '@/components/AppBits/GradientAccent';
 import SpotlightSurface from '@/components/AppBits/SpotlightSurface';
@@ -210,17 +210,35 @@ export default function Show({ internship }) {
                                     </span>
                                 )}
                             </div>
-                            <Link
-                                href={route('reports.intern', internship.id)}
-                                className='text-brand-600 dark:text-brand-400 text-sm hover:underline'
-                            >
-                                View report
-                            </Link>
+                            <div className='flex items-center gap-4'>
+                                <a
+                                    href={route('certificates.pdf', certificate.id)}
+                                    className='inline-flex items-center gap-1.5 text-brand-600 dark:text-brand-400 text-sm hover:underline'
+                                >
+                                    <Download className='w-3.5 h-3.5' />
+                                    PDF
+                                </a>
+                                <Link
+                                    href={route('reports.intern', internship.id)}
+                                    className='text-brand-600 dark:text-brand-400 text-sm hover:underline'
+                                >
+                                    View report
+                                </Link>
+                            </div>
                         </li>
                     ))}
                     {internship.certificates.length === 0 && (
-                        <li className='py-3 text-slate-500 dark:text-slate-400 text-sm'>
-                            No certificates issued.
+                        <li className='py-3 flex justify-between items-center gap-3'>
+                            <span className='text-slate-500 dark:text-slate-400 text-sm'>
+                                No certificates issued.
+                            </span>
+                            <a
+                                href={route('reports.certificate-pdf', internship.id)}
+                                className='inline-flex items-center gap-1.5 text-brand-600 dark:text-brand-400 text-sm hover:underline'
+                            >
+                                <Download className='w-3.5 h-3.5' />
+                                Generate PDF certificate
+                            </a>
                         </li>
                     )}
                 </ul>
