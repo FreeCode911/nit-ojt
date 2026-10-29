@@ -30,6 +30,14 @@ import {
 import { useTheme } from '../hooks/useTheme';
 import { AnimatedStats } from '../islands/AnimatedStats';
 import { DashboardCharts } from '../islands/DashboardCharts';
+import BlurText from '../components/reactbits/BlurText/BlurText';
+import GlareHover from '../components/reactbits/GlareHover/GlareHover';
+import GradientText from '../components/reactbits/GradientText/GradientText';
+import Magnet from '../components/reactbits/Magnet/Magnet';
+import ShinyText from '../components/reactbits/ShinyText/ShinyText';
+import SpotlightCard from '../components/reactbits/SpotlightCard/SpotlightCard';
+import SplitText from '../components/reactbits/SplitText/SplitText';
+import StarBorder from '../components/reactbits/StarBorder/StarBorder';
 
 const FEATURE_ICONS = {
     'book-open': BookOpen,
@@ -155,21 +163,47 @@ export default function Landing({
     );
 
     const ctaButtons = user ? (
-        <Link href={route('dashboard')} className='btn-primary group text-lg px-10 py-4'>
+        <StarBorder
+            as={Link}
+            href={route('dashboard')}
+            theme={dark ? 'dark' : 'light'}
+            duration={3.5}
+            glow={0.75}
+            radius={14}
+            thickness={1.25}
+            sparkle
+            backgroundColor='#4f46e5'
+            textColor='#ffffff'
+            borderColor={dark ? 'rgba(165, 180, 252, 0.4)' : 'rgba(79, 70, 229, 0.3)'}
+            className='group px-10! py-4! text-lg shadow-lg hover:shadow-xl transition-shadow duration-200'
+        >
             <LayoutDashboard className='w-5 h-5 mr-2 transition-transform group-hover:translate-x-1' />
             Go to Dashboard
-        </Link>
+        </StarBorder>
     ) : (
         <>
-            <Link href={route('register')} className='btn-primary group text-lg px-10 py-4'>
+            <StarBorder
+                as={Link}
+                href={route('register')}
+                theme={dark ? 'dark' : 'light'}
+                duration={3.5}
+                glow={0.75}
+                radius={14}
+                thickness={1.25}
+                sparkle
+                backgroundColor='#4f46e5'
+                textColor='#ffffff'
+                borderColor={dark ? 'rgba(165, 180, 252, 0.4)' : 'rgba(79, 70, 229, 0.3)'}
+                className='group px-10! py-4! text-lg shadow-lg hover:shadow-xl transition-shadow duration-200'
+            >
                 <UserPlus className='w-5 h-5 mr-2 transition-transform group-hover:translate-x-1' />
                 Start Free Trial
-            </Link>
+            </StarBorder>
             <Link
                 href={route('login')}
-                className='btn-ghost group text-lg px-10 py-4 border-2 border-slate-200 dark:border-slate-700'
+                className='btn-ghost group text-lg px-10 py-4 whitespace-nowrap border-2 border-slate-200 dark:border-slate-700'
             >
-                <LogIn className='w-5 h-5 mr-2' />
+                <LogIn className='w-5 h-5 mr-2 inline-block' />
                 Sign In
             </Link>
         </>
@@ -246,26 +280,40 @@ export default function Landing({
                             <span>New: Real-time analytics &amp; Dark mode</span>
                         </div>
 
-                        <h1
-                            className='text-5xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight leading-[1.1] text-slate-900 dark:text-white mb-6 animate-fade-in-up'
-                            style={{ animationDelay: '100ms' }}
-                        >
+                        <h1 className='text-5xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight leading-[1.1] text-slate-900 dark:text-white mb-6'>
                             Track your{' '}
-                            <span className='bg-gradient-to-r from-brand-600 via-violet-600 to-fuchsia-600 bg-clip-text text-transparent'>
+                            <GradientText
+                                colors={['#4f46e5', '#7c3aed', '#a855f7', '#4f46e5']}
+                                animationSpeed={6.5}
+                                yoyo
+                                glow={0.14}
+                            >
                                 OJT journey
-                            </span>
+                            </GradientText>{' '}
                             <br className='hidden lg:inline' />
-                            in one beautiful place
+                            <SplitText
+                                text='in one beautiful place'
+                                tag='span'
+                                trigger='load'
+                                splitType='chars'
+                                effect='rise'
+                                delay={20}
+                                duration={0.9}
+                                className='text-slate-900 dark:text-white'
+                            />
                         </h1>
 
-                        <p
-                            className='text-lg sm:text-xl lg:text-2xl text-slate-500 dark:text-slate-400 max-w-3xl mx-auto mb-10 animate-fade-in-up'
-                            style={{ animationDelay: '200ms' }}
-                        >
-                            A complete On-the-Job Training logbook for interns, supervisors, and admins.
-                            Log daily tasks, track hours, get evaluated, and earn certificates — with a
-                            modern dark UI.
-                        </p>
+                        <BlurText
+                            text='A complete On-the-Job Training logbook for interns, supervisors, and admins. Log daily tasks, track hours, get evaluated, and earn certificates — with a modern dark UI.'
+                            className='text-lg sm:text-xl lg:text-2xl text-slate-500 dark:text-slate-400 max-w-3xl mx-auto mb-10'
+                            animateBy='words'
+                            direction='top'
+                            trigger='load'
+                            delay={16}
+                            blur={7}
+                            distance={26}
+                            stepDuration={0.32}
+                        />
 
                         <div
                             className='flex flex-col sm:flex-row items-center justify-center gap-4 mb-16 animate-fade-in-up'
@@ -306,9 +354,9 @@ export default function Landing({
                         </div>
                         <h2 className='text-4xl sm:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-white mb-6'>
                             Everything you need for{' '}
-                            <span className='bg-gradient-to-r from-brand-600 to-violet-600 bg-clip-text text-transparent'>
+                            <GradientText colors={['#4f46e5', '#7c3aed', '#4f46e5']} animationSpeed={7} yoyo>
                                 successful OJT
-                            </span>
+                            </GradientText>
                         </h2>
                         <p className='text-lg text-slate-500 dark:text-slate-400'>
                             Built for the real world of On-the-Job Training. Powerful features, beautiful
@@ -321,10 +369,22 @@ export default function Landing({
                             const styles = FEATURE_STYLES[feature.color] || FEATURE_STYLES.brand;
                             const Icon = FEATURE_ICONS[feature.icon] || CheckCircle;
                             return (
-                                <article
+                                <SpotlightCard
                                     key={feature.title}
-                                    className='group relative card p-8 hover:shadow-xl hover:-translate-y-2 transition-all duration-500 overflow-hidden animate-fade-in-up'
-                                    style={{ animationDelay: `${index * 100}ms` }}
+                                    theme={dark ? 'dark' : 'light'}
+                                    spotlightColor={dark ? '#818cf8' : '#4f46e5'}
+                                    intensity={dark ? 0.28 : 0.14}
+                                    spotlightSize={260}
+                                    softness={0.72}
+                                    borderGlow={dark ? 0.6 : 0.45}
+                                    proximity={70}
+                                    flare
+                                    className='group transition-transform duration-500 hover:-translate-y-2 animate-fade-in-up'
+                                    style={{
+                                        animationDelay: `${index * 100}ms`,
+                                        '--spotlight-card-surface': dark ? 'rgba(15, 23, 42, 0.92)' : '#ffffff',
+                                        '--spotlight-card-shadow': 'none',
+                                    }}
                                 >
                                     <div
                                         className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${styles.bar} opacity-0 group-hover:opacity-100 transition-opacity duration-300`}
@@ -345,7 +405,7 @@ export default function Landing({
                                     <div
                                         className={`absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r ${styles.bar} scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left`}
                                     />
-                                </article>
+                                </SpotlightCard>
                             );
                         })}
                     </div>
@@ -465,26 +525,41 @@ export default function Landing({
                             )}
                         </div>
                         <div className='lg:order-1 relative'>
-                            <div className='rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/50 dark:border-slate-700/50 overflow-hidden shadow-2xl ring-1 ring-slate-200/50 dark:ring-slate-700/50 animate-fade-in-up'>
-                                <div className='flex items-center gap-2 px-4 py-3 bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200/50 dark:border-slate-700/50'>
-                                    <div className='flex gap-1.5'>
-                                        <div className='h-3 w-3 rounded-full bg-red-500'></div>
-                                        <div className='h-3 w-3 rounded-full bg-amber-500'></div>
-                                        <div className='h-3 w-3 rounded-full bg-emerald-500'></div>
+                            <GlareHover
+                                width='100%'
+                                glareColor='#ffffff'
+                                glareOpacity={0.45}
+                                blendMode='overlay'
+                                glareSize={26}
+                                softness={0.7}
+                                variant='streak'
+                                mode='hover'
+                                borderRadius='1rem'
+                                borderColor='rgba(0, 0, 0, 0)'
+                                className='animate-fade-in-up'
+                                style={{ boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)' }}
+                            >
+                                <div className='w-full bg-white dark:bg-slate-900 border border-slate-200/50 dark:border-slate-700/50 overflow-hidden rounded-2xl'>
+                                    <div className='flex items-center gap-2 px-4 py-3 bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200/50 dark:border-slate-700/50'>
+                                        <div className='flex gap-1.5'>
+                                            <div className='h-3 w-3 rounded-full bg-red-500'></div>
+                                            <div className='h-3 w-3 rounded-full bg-amber-500'></div>
+                                            <div className='h-3 w-3 rounded-full bg-emerald-500'></div>
+                                        </div>
+                                        <div className='flex-1 text-center text-xs text-slate-500 dark:text-slate-400 font-mono'>
+                                            dashboard.ojt-logbook.test
+                                        </div>
                                     </div>
-                                    <div className='flex-1 text-center text-xs text-slate-500 dark:text-slate-400 font-mono'>
-                                        dashboard.ojt-logbook.test
+                                    <div className='p-6'>
+                                        <DashboardCharts
+                                            data={dashboardChartData.data}
+                                            lines={dashboardChartData.lines}
+                                            height={dashboardChartData.height}
+                                            className='shadow-none border-0 bg-transparent dark:bg-transparent'
+                                        />
                                     </div>
                                 </div>
-                                <div className='p-6'>
-                                    <DashboardCharts
-                                        data={dashboardChartData.data}
-                                        lines={dashboardChartData.lines}
-                                        height={dashboardChartData.height}
-                                        className='shadow-none border-0 bg-transparent dark:bg-transparent'
-                                    />
-                                </div>
-                            </div>
+                            </GlareHover>
                         </div>
                     </div>
                 </div>
@@ -632,32 +707,42 @@ export default function Landing({
                         Join thousands of educators <br />
                         already using OJT Logbook
                     </h2>
-                    <p className='text-lg sm:text-xl text-brand-100 mb-10 max-w-2xl mx-auto'>
-                        Set up your account in minutes. No credit card required. Cancel anytime.
+                    <p className='text-lg sm:text-xl mb-10 max-w-2xl mx-auto'>
+                        <ShinyText
+                            text='Set up your account in minutes. No credit card required. Cancel anytime.'
+                            color='#c7d2fe'
+                            shineColor='#ffffff'
+                            speed={3.2}
+                            glow={0.3}
+                        />
                     </p>
                     <div className='flex flex-col sm:flex-row items-center justify-center gap-4'>
                         {user ? (
-                            <Link
-                                href={route('dashboard')}
-                                className='bg-white text-brand-600 hover:bg-brand-50 px-10 py-4 rounded-xl font-semibold text-lg shadow-xl hover:shadow-2xl transition-all duration-200 group'
-                            >
-                                <LayoutDashboard className='w-5 h-5 mr-2 inline-block group-hover:translate-x-1 transition-transform' />
-                                Go to Dashboard
-                            </Link>
-                        ) : (
-                            <>
+                            <Magnet padding={140} magnetStrength={2.2} tilt={6} scale={1.05}>
                                 <Link
-                                    href={route('register')}
+                                    href={route('dashboard')}
                                     className='bg-white text-brand-600 hover:bg-brand-50 px-10 py-4 rounded-xl font-semibold text-lg shadow-xl hover:shadow-2xl transition-all duration-200 group'
                                 >
-                                    <UserPlus className='w-5 h-5 mr-2 inline-block group-hover:translate-x-1 transition-transform' />
-                                    Start Free Trial
+                                    <LayoutDashboard className='w-5 h-5 mr-2 inline-block group-hover:translate-x-1 transition-transform' />
+                                    Go to Dashboard
                                 </Link>
+                            </Magnet>
+                        ) : (
+                            <>
+                                <Magnet padding={140} magnetStrength={2.2} tilt={6} scale={1.05}>
+                                    <Link
+                                        href={route('register')}
+                                        className='bg-white text-brand-600 hover:bg-brand-50 px-10 py-4 rounded-xl font-semibold text-lg shadow-xl hover:shadow-2xl transition-all duration-200 group'
+                                    >
+                                        <UserPlus className='w-5 h-5 mr-2 inline-block group-hover:translate-x-1 transition-transform' />
+                                        Start Free Trial
+                                    </Link>
+                                </Magnet>
                                 <Link
                                     href={route('login')}
-                                    className='border-2 border-white/30 text-white hover:bg-white/10 px-10 py-4 rounded-xl font-semibold text-lg transition-all duration-200'
+                                    className='whitespace-nowrap border-2 border-white/30 text-white hover:bg-white/10 px-10 py-4 rounded-xl font-semibold text-lg transition-all duration-200'
                                 >
-                                    <LogIn className='w-5 h-5 mr-2' />
+                                    <LogIn className='w-5 h-5 mr-2 inline-block' />
                                     Sign In
                                 </Link>
                             </>

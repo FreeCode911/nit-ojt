@@ -13,11 +13,15 @@ export default defineConfig({
         tailwindcss(),  
         react(),  
     ],  
-    resolve: {  
-        alias: {  
-            '@': path.resolve(__dirname, './resources/js'),  
-        },  
-    },  
+    resolve: {
+        alias: {
+            '@': path.resolve(__dirname, './resources/js'),
+        },
+        // gsap/@gsap-react live in the workspace root's node_modules (ancestor of the app).
+        // npm auto-installed react there too, which would duplicate React in the bundle;
+        // dedupe forces every react import to resolve to the app's copy.
+        dedupe: ['react', 'react-dom'],
+    },
     build: {  
         rollupOptions: {  
             output: {  
