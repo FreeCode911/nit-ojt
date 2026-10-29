@@ -3,6 +3,7 @@ import { useForm } from '@inertiajs/react';
 import { Award, BookOpen, Check, CheckCircle, Download, Star, Target } from 'lucide-react';
 import AppLayout from '@/Layouts/AppLayout';
 import GradientAccent from '@/components/AppBits/GradientAccent';
+import PdfDownloadLink from '@/components/AppBits/PdfDownloadLink';
 import SpotlightSurface from '@/components/AppBits/SpotlightSurface';
 import CountUp from '@/components/reactbits/CountUp/CountUp';
 
@@ -140,13 +141,13 @@ export default function InternReport({ internship, approvedHours, totalLogs, app
                             <Award className='w-4 h-4' />
                             Certificate
                         </h2>
-                        <a
+                        <PdfDownloadLink
                             href={route('reports.certificate-pdf', internship.id)}
                             className='btn-primary inline-flex items-center gap-2'
                         >
                             <Download className='w-4 h-4' />
                             Download PDF
-                        </a>
+                        </PdfDownloadLink>
                     </div>
                     <p className='text-sm text-slate-500 dark:text-slate-400 mb-4'>
                         {internship.certificates.length > 0
@@ -188,13 +189,13 @@ export default function InternReport({ internship, approvedHours, totalLogs, app
                                             {certificate.certificate_number} — {certificate.issued_to} (
                                             {certificate.issued_date})
                                         </span>
-                                        <a
+                                        <PdfDownloadLink
                                             href={route('certificates.pdf', certificate.id)}
                                             className='inline-flex items-center gap-1.5 text-brand-600 dark:text-brand-400 hover:underline'
                                         >
                                             <Download className='w-3.5 h-3.5' />
                                             PDF
-                                        </a>
+                                        </PdfDownloadLink>
                                     </li>
                                 ))}
                             </ul>

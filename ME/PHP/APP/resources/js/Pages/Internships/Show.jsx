@@ -2,6 +2,7 @@ import { Link, router, usePage } from '@inertiajs/react';
 import { Award, BookOpen, Download, FileText, Pencil, Star, Trash2 } from 'lucide-react';
 import AppLayout from '@/Layouts/AppLayout';
 import GradientAccent from '@/components/AppBits/GradientAccent';
+import PdfDownloadLink from '@/components/AppBits/PdfDownloadLink';
 import SpotlightSurface from '@/components/AppBits/SpotlightSurface';
 import CountUp from '@/components/reactbits/CountUp/CountUp';
 
@@ -211,13 +212,13 @@ export default function Show({ internship }) {
                                 )}
                             </div>
                             <div className='flex items-center gap-4'>
-                                <a
+                                <PdfDownloadLink
                                     href={route('certificates.pdf', certificate.id)}
                                     className='inline-flex items-center gap-1.5 text-brand-600 dark:text-brand-400 text-sm hover:underline'
                                 >
                                     <Download className='w-3.5 h-3.5' />
                                     PDF
-                                </a>
+                                </PdfDownloadLink>
                                 <Link
                                     href={route('reports.intern', internship.id)}
                                     className='text-brand-600 dark:text-brand-400 text-sm hover:underline'
@@ -232,13 +233,13 @@ export default function Show({ internship }) {
                             <span className='text-slate-500 dark:text-slate-400 text-sm'>
                                 No certificates issued.
                             </span>
-                            <a
+                            <PdfDownloadLink
                                 href={route('reports.certificate-pdf', internship.id)}
                                 className='inline-flex items-center gap-1.5 text-brand-600 dark:text-brand-400 text-sm hover:underline'
                             >
                                 <Download className='w-3.5 h-3.5' />
                                 Generate PDF certificate
-                            </a>
+                            </PdfDownloadLink>
                         </li>
                     )}
                 </ul>
